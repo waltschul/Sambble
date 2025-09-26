@@ -1,0 +1,53 @@
+import SwiftUI
+
+struct CardSwipeView: View {
+    let quiz: Quiz
+    @Binding var index: Int
+    @State private var showCorrectFlash: Bool = false
+    private var flashColor: Color {
+        switch index {
+        case 0: return Color(red: 0.5, green: 1.0, blue: 0.5) // soft light green
+        case 2: return Color(red: 1.0, green: 0.5, blue: 0.5) // soft light red
+        default: return .clear
+        }
+    }
+    
+    var body: some View {
+        ZStack {
+            TabView(selection: $index) {
+                CardView(card: quiz.nextCard).tag(0)
+                CardView(card: quiz.currentCard).tag(1)
+                CardView(card: quiz.nextCard).tag(2)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .tabViewStyle(.page(indexDisplayMode: .never))
+            .disabled(!quiz.currentCard.checked || index != 1)
+            .debugOutline()
+            .onChange(of: index) { _, newIndex in
+                quiz.currentCard.correct = newIndex == 1 ? nil : (newIndex == 0)
+                if newIndex != 1 {
+                    withAnimation(.easeIn(duration: 0.1)) {  // fade in
+                        showCorrectFlash = true
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        withAnimation(.easeOut(duration: 0.5)) {
+                            showCorrectFlash = false
+                        }
+                    }
+                }
+            }
+
+            // Flash overlay around the edges
+            if showCorrectFlash {
+                RoundedRectangle(cornerRadius: 50)
+                    .stroke(flashColor, lineWidth: 15)
+//                    .padding(10)
+                    .shadow(color: flashColor, radius: 50)
+                    .ignoresSafeArea()
+                    .transition(.opacity)
+                    .opacity(0.5)
+                    .animation(.easeInOut(duration: 0.3), value: showCorrectFlash)
+            }
+        }
+    }
+}
