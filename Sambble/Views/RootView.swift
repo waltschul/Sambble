@@ -3,7 +3,6 @@ import SwiftUI
 struct RootView_Preview: PreviewProvider {
     static let previewQuiz: Quiz = {
         Constants.DEBUG = true
-        clearDocuments()
         return loadQuiz(length: 7)
     }()
     

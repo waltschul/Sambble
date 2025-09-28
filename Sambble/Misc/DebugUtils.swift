@@ -27,3 +27,19 @@ func clearDocuments() {
         print("Failed to clear documents: \(error)")
     }
 }
+
+func debugPrintJSON<T: Encodable>(_ value: T) {
+    do {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        let data = try encoder.encode(value)
+        if let jsonString = String(data: data, encoding: .utf8) {
+            print(jsonString)
+        } else {
+            print("Could not convert JSON data to string")
+        }
+    } catch {
+        print("Failed to encode JSON: \(error)")
+    }
+}
+
