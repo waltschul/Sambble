@@ -46,7 +46,6 @@ class Quiz: Codable {
         if counts[0] < 5 {
             addCards(count: 1, toBox: 0)
         }
-        saveQuiz(quiz: self)
     }
     
     func popCard() -> ViewedCard {
@@ -66,6 +65,13 @@ class Quiz: Codable {
         print("[DEBUG] popCard: Popped '\(card.id)' from box \(box)")
         return ViewedCard(card: card, box: box)
     }
+    
+    enum CodingKeys: String, CodingKey {
+        case _wordLength = "wordLength"
+        case _cardLoader = "cardLoader"
+        case _currentCard = "currentCard"
+        case _nextCard = "nextCard"
+        case _cardboxes = "cardboxes"
+        case _count = "count"
+    }
 }
-
- 

@@ -10,7 +10,7 @@ func saveQuiz(quiz: Quiz) {
     do {
         let data = try JSONEncoder().encode(quiz)
         try data.write(to: url)
-//        debugPrintJSON(quiz)
+        if (Constants.DEBUG) { debugPrintJSON(quiz) }
     } catch {
         print("[DEBUG] Failed to save quiz to \(url): \(error)")
     }

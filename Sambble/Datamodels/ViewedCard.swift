@@ -20,4 +20,10 @@ class ViewedCard: Codable {
         self.checked = checked
         self.correct = correct
     }
+    
+    enum CodingKeys: String, CodingKey {
+        case _card = "card"
+        case _box = "box"
+        case _checked = "checked"
+    }
 }

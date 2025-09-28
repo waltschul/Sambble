@@ -24,5 +24,6 @@ struct QuizView: View {
             index = 1
         }
         quiz.currentCard.checked = true
+        saveQuiz(quiz: quiz)
     }
 }
