@@ -89,6 +89,8 @@ class CardLoader: Codable {
         let minBlanksNeeded = max(0, count - avail)
         let maxBlanksUsable = min(remainingBlanks, count)
 
+        guard minBlanksNeeded <= maxBlanksUsable else { return 0.0 }
+
         for blanksForThisLetter in minBlanksNeeded...maxBlanksUsable {
             let regularForThisLetter = count - blanksForThisLetter
 
