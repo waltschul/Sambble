@@ -1,33 +1,30 @@
 import Foundation
 import Combine
 
-//TODO somewhat AI-written
-class CardLoader: Codable {
-    private static let tileCounts: [String: Int] = [
-        "A": 9, "B": 2, "C": 2, "D": 4, "E": 12, "F": 2, "G": 3, "H": 2, "I": 9, "J": 1, "K": 1, "L": 4, "M": 2, "N": 6, "O": 8, "P": 2, "Q": 1, "R": 6, "S": 4, "T": 6, "U": 4, "V": 2, "W": 2, "X": 1, "Y": 2, "Z": 1
-    ]
-    private static let blankTileCount = 2
-    private var wordLength: Int
-    private var index = 0
-    private lazy var cards: [Card] = CardLoader.loadCards(resource: "nwl23", wordLength: wordLength)
+class CardLoader {
+    static let blankTileCount = 2
+    var cards: [Card]
     
-    enum CodingKeys: String, CodingKey {
-        case index, wordLength
+    init(quizDefinition: QuizDefinition, excludeCards: [Card] = []) {
+        self.cards = CardLoader.loadCards(
+            resource: "nwl23",
+            quizDefinition: quizDefinition,
+            excludeCards: excludeCards);
     }
-
-    init(wordLength: Int) {
-        self.wordLength = wordLength
+    
+    func cardAt(index: Double) -> (Int, Card) {
+        let index = Int(index * Double(cards.count - 1))
+        return (index, cards[index])
     }
     
     func nextCards(count: Int) -> [Card] {
-        let to = index+count
-        print("[DEBUG] Requesting \(count) cards from \(index) to \(to)")
-        let cards = Array(cards[index..<to])
-        index += count
-        return cards
+        let count = min(count, cards.count)
+        let poppedCards = Array(cards.prefix(count))
+        cards.removeFirst(count)
+        return poppedCards
     }
     
-    private static func loadCards(resource: String, wordLength: Int) -> [Card] {
+    private static func loadCards(resource: String, quizDefinition: QuizDefinition, excludeCards: [Card]) -> [Card] {
         guard let url = Bundle.main.url(forResource: resource, withExtension: "txt"),
               let data = try? Data(contentsOf: url),
               let content = String(data: data, encoding: .utf8) else { 
@@ -35,32 +32,35 @@ class CardLoader: Codable {
             return []
         }
         
-        let allWords = content.components(separatedBy: .newlines).map { $0.uppercased() };
-        let words = allWords.filter { $0.count == wordLength }
-        let wordsPlusOne = Set(allWords.filter { $0.count == wordLength + 1})
+        let allWords = Set(content.components(separatedBy: .newlines).map { $0.uppercased() })
+        let words = allWords.filter(quizDefinition.filter)
         
         let anagramGroups = Dictionary(grouping: words) { String($0.sorted()) }
-        var cards : [Card] = []
-        
+        var cards: [(probability: Double, card: Card)] = []
+        let excludeSet = Set(excludeCards.map { $0.id })
+
         for (key, words) in anagramGroups {
+            if excludeSet.contains(key) { continue }
             var wordsWithHooks: [Word] = []
             for word in words.sorted() {
                 var frontHooks = ""
                 var backHooks = ""
-                for c in tileCounts.keys {
-                    if wordsPlusOne.contains(c + word) { frontHooks += c }
-                    if wordsPlusOne.contains(word + c) { backHooks += c }
+                for c in Constants.tileCounts.keys {
+                    if allWords.contains(c + word) { frontHooks += c }
+                    if allWords.contains(word + c) { backHooks += c }
                 }
                 wordsWithHooks.append(Word(id: word, frontHooks: frontHooks, backHooks: backHooks))
             }
-            cards.append(Card(
-                id: key,
-                words: wordsWithHooks,
-                probability: probabilityWeight(letters: key)
-            ))
+            cards.append((probability: probabilityWeight(letters: key), card: Card(id: key, words: wordsWithHooks)))
         }
-        print("[DEBUG] Created \(cards.count) cards of length \(wordLength) from \(resource)")
-        return cards.sorted { $0.probability > $1.probability }
+        print("All cards: \(anagramGroups.count), Excluded cards: \(excludeSet.count), Selected cards: \(cards.count)")
+        
+        return cards.sorted {
+                $0.probability != $1.probability
+                    ? $0.probability > $1.probability
+                    : $0.card.id < $1.card.id
+            }
+            .map { $0.card }
     }
     
     private static func probabilityWeight(letters: String) -> Double {
@@ -82,10 +82,9 @@ class CardLoader: Codable {
         let count = letterCounts[firstLetter]!
         let remainingLetters = letterCounts.filter { $0.key != firstLetter }
 
-        let avail = tileCounts[String(firstLetter.uppercased())] ?? 0
+        let avail = Constants.tileCounts[String(firstLetter.uppercased())] ?? 0
         var totalProb: Double = 0.0
 
-        let maxFromRegular = min(count, avail)
         let minBlanksNeeded = max(0, count - avail)
         let maxBlanksUsable = min(remainingBlanks, count)
 

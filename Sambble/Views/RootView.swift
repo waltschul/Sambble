@@ -1,32 +1,24 @@
 import SwiftUI
 
-struct RootView_Preview: PreviewProvider {
-    static let previewQuiz: Quiz = {
-        Constants.DEBUG = true
-        return loadQuiz(length: 7)
-    }()
-    
-    static var previews: some View {
-        RootView(quiz: previewQuiz)
-    }
+#Preview {
+    RootView()
 }
 
+//TODO deduplicate current cards
 struct RootView: View {
-    let quiz: Quiz
-    @State private var showSplash = true
+    @State private var showSplash = Constants.DEBUG ? false : true
 
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
-            if !showSplash {
-                QuizView(quiz: quiz)
-            }
-            
+
             if showSplash {
                 Image("Sam")
                     .resizable()
                     .scaledToFit()
                     .scaleEffect(0.6)
+            } else {
+                QuizInitializeView(wordLength: 7)
             }
         }
         .onAppear {

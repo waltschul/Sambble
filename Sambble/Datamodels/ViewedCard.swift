@@ -6,15 +6,15 @@ class ViewedCard: Codable {
     var box: Int
     var checked: Bool
     var correct: Bool?
-    var nextBox: Int {
+    var newBox: Int {
         switch correct {
         case .some(true):  return min(box + 1, Constants.NUM_BOXES - 1)
-            case .some(false): return max(box - 1, 0)
+            case .some(false): return 0
             case .none:   return box
         }
     }
     
-    init(card: Card, box: Int, checked: Bool = false, correct: Bool? = nil) {
+    init(card: Card, box: Int = 0, checked: Bool = false, correct: Bool? = nil) {
         self.card = card
         self.box = box
         self.checked = checked
@@ -25,5 +25,11 @@ class ViewedCard: Codable {
         case _card = "card"
         case _box = "box"
         case _checked = "checked"
+    }
+}
+
+extension ViewedCard: CustomStringConvertible {
+    var description: String {
+        "\(card.id)"
     }
 }

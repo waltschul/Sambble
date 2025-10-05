@@ -9,10 +9,9 @@ import SwiftUI
 
 @main
 struct SambbleApp: App {
-    let quiz = loadQuiz(length: 7)
     var body: some Scene {
         WindowGroup {
-            RootView(quiz: quiz)
+            RootView()
         }
     }
 }
