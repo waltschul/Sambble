@@ -3,8 +3,8 @@ import SwiftUI
 struct CardSwipeView: View {
     let quiz: Quiz
     @Binding var index: Int
-    @State private var showCorrectFlash: Bool = false
-    private var flashColor: Color {
+    @State var showCorrectFlash: Bool = false
+    var flashColor: Color {
         switch index {
         case 0: return Color(red: 0.5, green: 1.0, blue: 0.5) // soft light green
         case 2: return Color(red: 1.0, green: 0.5, blue: 0.5) // soft light red

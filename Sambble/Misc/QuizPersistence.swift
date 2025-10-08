@@ -1,7 +1,7 @@
 import Foundation
 
-func quizFileURL(length: Int) throws -> URL {
-    let fileName = "quiz\(length)-\(Constants.VERSION).json"
+func quizFileURL(id: String) throws -> URL {
+    let fileName = "\(id)-\(Constants.VERSION).json"
     let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.Sambble")
     return containerURL!.appendingPathComponent(fileName)
 }
@@ -9,7 +9,7 @@ func quizFileURL(length: Int) throws -> URL {
 func saveQuiz(quiz: Quiz) {
     if (Constants.DEBUG) { return }
     do {
-        let url = try quizFileURL(length: quiz.wordLength)
+        let url = try quizFileURL(id: quiz.name)
         let data = try JSONEncoder().encode(quiz)
         try data.write(to: url)
     } catch {
@@ -17,14 +17,13 @@ func saveQuiz(quiz: Quiz) {
     }
 }
 
-func loadQuiz(length: Int) -> Quiz? {
+func loadQuiz(id: String) -> Quiz? {
     if (Constants.DEBUG) {
         return nil
-//        return Quiz(wordLength: length, index: 0)
     }
 
     do {
-        let url = try quizFileURL(length: length)
+        let url = try quizFileURL(id: id)
         let data = try Data(contentsOf: url)
         let quiz = try JSONDecoder().decode(Quiz.self, from: data)
         print("[DEBUG] Quiz loaded successfully from \(url)")

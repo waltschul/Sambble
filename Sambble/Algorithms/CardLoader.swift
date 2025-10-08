@@ -1,20 +1,14 @@
 import Foundation
 import Combine
 
-class CardLoader {
+class CardLoader: Codable {
     static let blankTileCount = 2
     var cards: [Card]
     
-    init(quizDefinition: QuizDefinition, excludeCards: [Card] = []) {
+    init(quizParameters: QuizParameters) {
         self.cards = CardLoader.loadCards(
             resource: "nwl23",
-            quizDefinition: quizDefinition,
-            excludeCards: excludeCards);
-    }
-    
-    func cardAt(index: Double) -> (Int, Card) {
-        let index = Int(index * Double(cards.count - 1))
-        return (index, cards[index])
+            quizParameters: quizParameters);
     }
     
     func nextCards(count: Int) -> [Card] {
@@ -24,7 +18,7 @@ class CardLoader {
         return poppedCards
     }
     
-    private static func loadCards(resource: String, quizDefinition: QuizDefinition, excludeCards: [Card]) -> [Card] {
+    private static func loadCards(resource: String, quizParameters: QuizParameters) -> [Card] {
         guard let url = Bundle.main.url(forResource: resource, withExtension: "txt"),
               let data = try? Data(contentsOf: url),
               let content = String(data: data, encoding: .utf8) else { 
@@ -33,14 +27,12 @@ class CardLoader {
         }
         
         let allWords = Set(content.components(separatedBy: .newlines).map { $0.uppercased() })
-        let words = allWords.filter(quizDefinition.filter)
+        let words = allWords.filter(quizParameters.filter)
         
         let anagramGroups = Dictionary(grouping: words) { String($0.sorted()) }
         var cards: [(probability: Double, card: Card)] = []
-        let excludeSet = Set(excludeCards.map { $0.id })
 
         for (key, words) in anagramGroups {
-            if excludeSet.contains(key) { continue }
             var wordsWithHooks: [Word] = []
             for word in words.sorted() {
                 var frontHooks = ""
@@ -51,9 +43,15 @@ class CardLoader {
                 }
                 wordsWithHooks.append(Word(id: word, frontHooks: frontHooks, backHooks: backHooks))
             }
-            cards.append((probability: probabilityWeight(letters: key), card: Card(id: key, words: wordsWithHooks)))
+            let probability = probabilityWeight(letters: key)
+            if (probability != 0) {
+                cards.append((probability: probability, card: Card(id: key, words: wordsWithHooks)))
+            }
         }
-        print("All cards: \(anagramGroups.count), Excluded cards: \(excludeSet.count), Selected cards: \(cards.count)")
+        
+        for entry in cards where entry.probability == 0.0 {
+            print("[DEBUG] Zero-probability card: \(entry.card.id) -> words: \(entry.card.words.map { $0.id })")
+        }
         
         return cards.sorted {
                 $0.probability != $1.probability

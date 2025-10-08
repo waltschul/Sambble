@@ -2,17 +2,19 @@ import SwiftUI
 
 struct QuizView: View {
     let quiz: Quiz
-    @State private var index = 1
+    @State var index = 1
 
     var body: some View {
         CardSwipeView(quiz: quiz, index: $index)
             .background(Color.clear.contentShape(Rectangle()).ignoresSafeArea())
             .onTapGesture { handleCardAnswer() }
-            .overlay(CardboxView(quiz: quiz)
-                .padding(.leading),
+            .overlay(
+                CardboxView(quiz: quiz)
+                    .padding(.leading),
                 alignment: .topLeading
             )
-            .overlay(ScoreView(quiz: quiz),
+            .overlay(
+                ScoreView(quiz: quiz),
                 alignment: .top
             )
     }

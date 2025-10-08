@@ -1,37 +1,39 @@
 import SwiftUI
 
 struct InitializeView: View {
+    let name: String
     let cardLoader: CardLoader
+    let quizCache: QuizCache
     @State var value: Double = 0
-    @Binding var quiz: Quiz?
-    private var card: (index: Int, card: Card) {
-        cardLoader.cardAt(index: value)
+    var index: Int {
+        min(Int(value), cardLoader.cards.count - 1)
     }
     
     var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-            VStack {
-                Slider(value: $value, in: 0...1)
-                    .accentColor(.blue) // Fill color
-                    .padding()
-                Text("\(card.0 + 1) / \(cardLoader.cards.count)").foregroundColor(.white)
-                CardView(card: ViewedCard(card: card.1, checked: true))
-                Button(action: {
-                    makeQuiz()
-                }) {
-                    Text("Create Quiz")
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.blue)
-                        .cornerRadius(8)
-                }
+        VStack {
+            Button(action: { makeQuiz() }) {
+                Image(systemName: "text.book.closed.fill")
+                    .font(.title)
+                    .foregroundColor(.white)
+                    .padding(16)
+                    .background(Circle().fill(Constants.THEME))
+                    .shadow(radius: 4)
             }
-            
+            .padding(.bottom, 8)
+            .debugOutline()
+            Text("\(String(index + 1)) / \(String(cardLoader.cards.count))")
+                .foregroundColor(.white)
+                .debugOutline()
+            Slider(value: $value, in: 0...Double(cardLoader.cards.count))
+                .accentColor(Constants.THEME)
+                .frame(height: 0)
+                .padding()
+                .debugOutline()
+            CardView(card: ViewedCard(card: cardLoader.cards[index], checked: true))
         }
     }
     
     func makeQuiz() {
-        quiz = Quiz(wordLength: cardLoader.wordLength, index: card.0)
+        quizCache.quizCache[name] = Quiz(name: name, cardLoader: cardLoader, index: index)
     }
 }

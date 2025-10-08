@@ -1,30 +1,43 @@
 import SwiftUI
 
 #Preview {
-    RootView()
+    RootView(quizCache: QuizCache(quizzes: Constants.PREVIEW_QUIZZES))
 }
 
-//TODO deduplicate current cards
 struct RootView: View {
-    @State private var showSplash = Constants.DEBUG ? false : true
-
+    @State var quizCache: QuizCache
+    @State var selectedQuiz: String
+    
+    init(quizCache: QuizCache) {
+        self.quizCache = quizCache
+        self.selectedQuiz = quizCache.quizzes.first!.id
+    }
+    
     var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-
-            if showSplash {
-                Image("Sam")
-                    .resizable()
-                    .scaledToFit()
-                    .scaleEffect(0.6)
-            } else {
-                QuizInitializeView(wordLength: 7)
-            }
-        }
-        .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                withAnimation() {
-                    showSplash = false
+        NavigationStack {
+            ZStack {
+                Color.black.ignoresSafeArea()
+                VStack {
+                    if let existingQuiz = quizCache.quizCache[selectedQuiz] {
+                        QuizView(quiz: existingQuiz)
+                    } else {
+                        InitializeView(
+                            name: selectedQuiz,
+                            cardLoader: quizCache.cardLoaderCache[selectedQuiz]!,
+                            quizCache: quizCache
+                        )
+                    }
+                }
+                .background(Color.black)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        NavigationLink(destination: SettingsView(selectedQuiz: $selectedQuiz, quizCache: quizCache)) {
+                            Image(systemName: "gearshape")
+                                .imageScale(.large)
+                                .foregroundColor(Constants.THEME)
+                        }
+                        .debugOutline()
+                    }
                 }
             }
         }

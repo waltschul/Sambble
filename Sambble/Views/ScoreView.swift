@@ -2,11 +2,11 @@ import SwiftUI
 
 struct ScoreView: View {
     let quiz: Quiz
-    @State private var isAnimating = false
+    @State var isAnimating = false
     
     var body: some View {
-        Text("\(quiz.score)")
-            .foregroundColor(.mint)
+        Text(String(quiz.score))
+            .foregroundColor(Constants.THEME)
             .font(.system(size: 50, weight: .medium, design: .monospaced))
             .scaleEffect(isAnimating ? 1.1 : 1.0)
             .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isAnimating)

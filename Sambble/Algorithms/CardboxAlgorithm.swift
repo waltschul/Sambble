@@ -1,5 +1,5 @@
 class CardboxAlgorithm: Codable {
-    private var count: Int = 0;
+    var count: Int = 0;
     
     func nextCardbox(cardboxes: [[Card]]) -> Int {
         count += 1

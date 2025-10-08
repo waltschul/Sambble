@@ -1,5 +1,4 @@
 struct QuizDefinition {
-    let name: String
-    let probabiltyOrder: Bool
-    let filter: (String) -> Bool
+    let id: String
+    let quizParameters: QuizParameters
 }
