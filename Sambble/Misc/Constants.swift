@@ -22,6 +22,7 @@ struct Constants {
     static let FIVES = QuizDefinition(id: "JKQXZ Fives", quizParameters: QuizParameters(probabilityOrder: false, filter: { $0.count == 5 && $0.contains { "JKQXZ".contains($0) } }))
     static let SEVENS = QuizDefinition(id: "Sevens", quizParameters: QuizParameters(probabilityOrder: true, filter: { $0.count == 7 }))
     static let EIGHTS = QuizDefinition(id: "Eights", quizParameters: QuizParameters(probabilityOrder: true, filter: { $0.count == 8 }))
+    static let FIVE_VOWEL_EIGHTS = QuizDefinition(id: "5 Vowel Eights", quizParameters: QuizParameters(probabilityOrder: true, filter: {$0.count == 8}))
     static let QUIZZES: [QuizDefinition] = [THREES, FOURS, FIVES, SEVENS, EIGHTS]
     static let PREVIEW_QUIZZES: [QuizDefinition] = [THREES, FIVES]
 }

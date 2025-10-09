@@ -1,12 +1,15 @@
 import SwiftUI
 
 struct InitializeView: View {
-    let name: String
+    let quizDefinition: QuizDefinition
     let cardLoader: CardLoader
     let quizCache: QuizCache
     @State var value: Double = 0
     var index: Int {
         min(Int(value), cardLoader.cards.count - 1)
+    }
+    var card: Card {
+        cardLoader.cards[index]
     }
     
     var body: some View {
@@ -29,11 +32,12 @@ struct InitializeView: View {
                 .frame(height: 0)
                 .padding()
                 .debugOutline()
-            CardView(card: ViewedCard(card: cardLoader.cards[index], checked: true))
+            CardView(card: ViewedCard(card: card, checked: true))
         }
+        .debugOutline()
     }
     
     func makeQuiz() {
-        quizCache.quizCache[name] = Quiz(name: name, cardLoader: cardLoader, index: index)
+        quizCache.quizCache[name] = Quiz(name: name, cardLoader: cardLoader, until: card)
     }
 }

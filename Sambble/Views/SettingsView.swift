@@ -38,11 +38,7 @@ struct SettingsView: View {
                 }
                 .background(Color.black)
                 .scrollContentBackground(.hidden)
-                .listRowBackground(Color.black)
-                .toolbarBackground(Color.black, for: .navigationBar)    // set nav bar background
-                .toolbarColorScheme(.dark, for: .navigationBar)
             }
         }
-        .accentColor(Color.black) // sets navigation back button and links
     }
 }

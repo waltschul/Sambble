@@ -19,7 +19,6 @@ struct CardSwipeView: View {
                 CardView(card: quiz.currentCard).tag(1)
                 CardView(card: quiz.nextCard).tag(2)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .tabViewStyle(.page(indexDisplayMode: .never))
             .disabled(!quiz.currentCard.checked || index != 1)
             .debugOutline()

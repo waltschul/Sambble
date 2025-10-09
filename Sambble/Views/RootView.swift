@@ -28,17 +28,14 @@ struct RootView: View {
                         )
                     }
                 }
-                .background(Color.black)
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        NavigationLink(destination: SettingsView(selectedQuiz: $selectedQuiz, quizCache: quizCache)) {
-                            Image(systemName: "gearshape")
-                                .imageScale(.large)
-                                .foregroundColor(Constants.THEME)
-                        }
-                        .debugOutline()
-                    }
-                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .overlay(
+                    NavigationLink(destination: SettingsView(selectedQuiz: $selectedQuiz, quizCache: quizCache)) {
+                        Image(systemName: "gearshape")
+                            .imageScale(.large)
+                            .foregroundColor(Constants.THEME)
+                    }.padding(.trailing),
+                    alignment: .topTrailing)
             }
         }
     }
