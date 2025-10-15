@@ -11,7 +11,7 @@ import SwiftUI
 struct SambbleApp: App {
     var body: some Scene {
         WindowGroup {
-            RootView(quizCache: QuizCache(quizzes: Constants.QUIZZES))
+            RootView()
         }
     }
 }

@@ -1,16 +1,23 @@
 import SwiftUI
 
 #Preview {
-    RootView(quizCache: QuizCache(quizzes: Constants.PREVIEW_QUIZZES))
+    RootView()
 }
 
 struct RootView: View {
     @State var quizCache: QuizCache
-    @State var selectedQuiz: String
+    @State var selectedQuiz: QuizID
     
-    init(quizCache: QuizCache) {
+    init() {
+        let quizCache = QuizCache()
         self.quizCache = quizCache
-        self.selectedQuiz = quizCache.quizzes.first!.id
+        self.selectedQuiz = quizCache.quizzes.first!
+        if let selectedQuiz = UserDefaults.standard.string(forKey: "selectedQuiz") {
+            self.selectedQuiz = QuizID(rawValue: selectedQuiz)!
+        } else {
+            self.selectedQuiz = quizCache.quizzes.first!
+        }
+        
     }
     
     var body: some View {
@@ -22,7 +29,7 @@ struct RootView: View {
                         QuizView(quiz: existingQuiz)
                     } else {
                         InitializeView(
-                            name: selectedQuiz,
+                            quizID: selectedQuiz,
                             cardLoader: quizCache.cardLoaderCache[selectedQuiz]!,
                             quizCache: quizCache
                         )
@@ -34,7 +41,10 @@ struct RootView: View {
                         Image(systemName: "gearshape")
                             .imageScale(.large)
                             .foregroundColor(Constants.THEME)
-                    }.padding(.trailing),
+                            .contentShape(Rectangle()) // make entire padded area tappable
+
+                    }.padding(.all)
+                    .debugOutline(),
                     alignment: .topTrailing)
             }
         }

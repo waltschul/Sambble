@@ -10,7 +10,7 @@ struct QuizView: View {
             .onTapGesture { handleCardAnswer() }
             .overlay(
                 CardboxView(quiz: quiz)
-                    .padding(.leading),
+                    .padding(.all),
                 alignment: .topLeading
             )
             .overlay(

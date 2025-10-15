@@ -5,7 +5,7 @@ struct CardboxView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
-            ForEach(Array(quiz.counts.enumerated()), id: \.0) { index, count in
+            ForEach(Array(quiz.counts.enumerated().dropFirst()), id: \.0) { index, count in
                 if count > 0 {
                     HStack {
                         Text("\(index):")

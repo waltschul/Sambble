@@ -17,13 +17,13 @@ func saveQuiz(quiz: Quiz) {
     }
 }
 
-func loadQuiz(id: String) -> Quiz? {
+func loadQuiz(id: QuizID) -> Quiz? {
     if (Constants.DEBUG) {
         return nil
     }
 
     do {
-        let url = try quizFileURL(id: id)
+        let url = try quizFileURL(id: id.rawValue)
         let data = try Data(contentsOf: url)
         let quiz = try JSONDecoder().decode(Quiz.self, from: data)
         print("[DEBUG] Quiz loaded successfully from \(url)")

@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		BE5C16342E9F2E5F0000D31B /* SwiftCSV in Frameworks */ = {isa = PBXBuildFile; productRef = BE5C16332E9F2E5F0000D31B /* SwiftCSV */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		BE681E142E85CBB200B24499 /* Sambble.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sambble.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE5C16342E9F2E5F0000D31B /* SwiftCSV in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +70,7 @@
 			);
 			name = Sambble;
 			packageProductDependencies = (
+				BE5C16332E9F2E5F0000D31B /* SwiftCSV */,
 			);
 			productName = Sambble;
 			productReference = BE681E142E85CBB200B24499 /* Sambble.app */;
@@ -94,6 +100,9 @@
 			);
 			mainGroup = BE681E0B2E85CBB200B24499;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				BE5C16322E9F2E5F0000D31B /* XCRemoteSwiftPackageReference "SwiftCSV" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = BE681E152E85CBB200B24499 /* Products */;
 			projectDirPath = "";
@@ -326,6 +335,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		BE5C16322E9F2E5F0000D31B /* XCRemoteSwiftPackageReference "SwiftCSV" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/swiftcsv/SwiftCSV.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.10.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		BE5C16332E9F2E5F0000D31B /* SwiftCSV */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BE5C16322E9F2E5F0000D31B /* XCRemoteSwiftPackageReference "SwiftCSV" */;
+			productName = SwiftCSV;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = BE681E0C2E85CBB200B24499 /* Project object */;
 }

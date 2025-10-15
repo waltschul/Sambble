@@ -1,14 +1,15 @@
 import Foundation
 import Combine
+import SwiftCSV
 
 class CardLoader: Codable {
     static let blankTileCount = 2
     var cards: [Card]
     
     init(quizParameters: QuizParameters) {
-        self.cards = CardLoader.loadCards(
-            resource: "nwl23",
-            quizParameters: quizParameters);
+        let url = Bundle.main.url(forResource: "nwl23", withExtension: "csv")!
+        let csv = try! CSV<Named>(url: url)
+        self.cards = CardLoader.loadCards(csv: csv, quizParameters: quizParameters);
     }
     
     func nextCards(count: Int) -> [Card] {
@@ -18,98 +19,41 @@ class CardLoader: Codable {
         return poppedCards
     }
     
-    private static func loadCards(resource: String, quizParameters: QuizParameters) -> [Card] {
-        guard let url = Bundle.main.url(forResource: resource, withExtension: "txt"),
-              let data = try? Data(contentsOf: url),
-              let content = String(data: data, encoding: .utf8) else { 
-            print("[DEBUG] Failed to load resource \(resource)")
-            return []
-        }
-        
-        let allWords = Set(content.components(separatedBy: .newlines).map { $0.uppercased() })
-        let words = allWords.filter(quizParameters.filter)
-        
-        let anagramGroups = Dictionary(grouping: words) { String($0.sorted()) }
-        var cards: [(probability: Double, card: Card)] = []
-
-        for (key, words) in anagramGroups {
-            var wordsWithHooks: [Word] = []
-            for word in words.sorted() {
-                var frontHooks = ""
-                var backHooks = ""
-                for c in Constants.tileCounts.keys {
-                    if allWords.contains(c + word) { frontHooks += c }
-                    if allWords.contains(word + c) { backHooks += c }
-                }
-                wordsWithHooks.append(Word(id: word, frontHooks: frontHooks, backHooks: backHooks))
+    static func loadCards(csv: CSV<Named>, quizParameters: QuizParameters) -> [Card] {
+        // Step 1: Filter rows and map to (alphagram, Word) tuples in one chain
+        let wordsWithAlphagram: [(alphagram: String, word: Word)] = csv.rows
+            .filter { quizParameters.filter($0["alphagram"]!) }
+            .map { row in
+                let word = Word(
+                    id: row["word"]!,
+                    frontHooks: row["front_hooks"]!,
+                    backHooks: row["back_hooks"]!,
+                    definition: row["definition"]!
+                )
+                return (row["alphagram"]!, word)
             }
-            let probability = probabilityWeight(letters: key)
-            if (probability != 0) {
-                cards.append((probability: probability, card: Card(id: key, words: wordsWithHooks)))
+
+        // Step 2: Group words by alphagram while preserving order
+        var seenAlphagrams: [String] = []
+        var grouped: [String: [Word]] = [:]
+
+        for entry in wordsWithAlphagram {
+            if grouped[entry.alphagram] == nil {
+                grouped[entry.alphagram] = [entry.word]
+                seenAlphagrams.append(entry.alphagram)
+            } else {
+                grouped[entry.alphagram]?.append(entry.word)
             }
         }
-        
-        for entry in cards where entry.probability == 0.0 {
-            print("[DEBUG] Zero-probability card: \(entry.card.id) -> words: \(entry.card.words.map { $0.id })")
-        }
-        
-        return cards.sorted {
-                $0.probability != $1.probability
-                    ? $0.probability > $1.probability
-                    : $0.card.id < $1.card.id
-            }
-            .map { $0.card }
-    }
-    
-    private static func probabilityWeight(letters: String) -> Double {
-        var letterCounts: [Character: Int] = [:]
-        for c in letters {
-            letterCounts[c, default: 0] += 1
+
+        // Step 3: Build Cards
+        var cards = seenAlphagrams.map { Card(id: $0, words: grouped[$0]!) }
+
+        // Step 4: Shuffle if probabilityOrder is false
+        if !quizParameters.probabilityOrder {
+            cards.shuffle()
         }
 
-        return probabilityWithBlanks(letterCounts: letterCounts, blanksUsed: 0)
-    }
-
-    private static func probabilityWithBlanks(letterCounts: [Character: Int], blanksUsed: Int) -> Double {
-        if blanksUsed > blankTileCount { return 0.0 }
-        if letterCounts.isEmpty { return 1.0 }
-
-        let remainingBlanks = blankTileCount - blanksUsed
-        let letters = Array(letterCounts.keys)
-        let firstLetter = letters[0]
-        let count = letterCounts[firstLetter]!
-        let remainingLetters = letterCounts.filter { $0.key != firstLetter }
-
-        let avail = Constants.tileCounts[String(firstLetter.uppercased())] ?? 0
-        var totalProb: Double = 0.0
-
-        let minBlanksNeeded = max(0, count - avail)
-        let maxBlanksUsable = min(remainingBlanks, count)
-
-        guard minBlanksNeeded <= maxBlanksUsable else { return 0.0 }
-
-        for blanksForThisLetter in minBlanksNeeded...maxBlanksUsable {
-            let regularForThisLetter = count - blanksForThisLetter
-
-            let probForThisChoice = Double(combination(n: avail, k: regularForThisLetter)) *
-                                   Double(combination(n: remainingBlanks, k: blanksForThisLetter))
-
-            let probForRest = probabilityWithBlanks(letterCounts: remainingLetters, blanksUsed: blanksUsed + blanksForThisLetter)
-
-            totalProb += probForThisChoice * probForRest
-        }
-
-        return totalProb
-    }
-    
-    private static func combination(n: Int, k: Int) -> Int {
-        if k > n { return 0 }
-        if k == 0 { return 1 }
-        var result = 1
-        for i in 0..<k {
-            result *= (n - i)
-            result /= (i + 1)
-        }
-        return result
+        return cards
     }
 }

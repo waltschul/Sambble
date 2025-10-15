@@ -18,7 +18,7 @@ final class Quiz: Codable {
         return counts.dropFirst().reduce(0, +)
     }
     
-    init(name: String, cardLoader: CardLoader, until: Card) {
+    init(name: String, cardLoader: CardLoader, until: Card? = nil) {
         var initialCards = cardLoader.nextCards(count: 2)
         self.name = name
         self.cardboxAlgorithm = CardboxAlgorithm()
@@ -26,9 +26,10 @@ final class Quiz: Codable {
         self.currentCard = ViewedCard(card: initialCards.removeFirst())
         self.nextCard = ViewedCard(card: initialCards.removeFirst())
         self.cardLoader = cardLoader
-        while currentCard.card != until {
+        while until != nil && currentCard.card != until {
             advance(correct: true)
         }
+        saveQuiz(quiz: self)
     }
     
     func advance(correct: Bool) {

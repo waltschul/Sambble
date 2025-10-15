@@ -2,28 +2,30 @@ import Foundation
 
 @Observable
 class QuizCache {
-    let quizzes: [QuizDefinition]
-    var quizCache: [String: Quiz] = [:]
-    var cardLoaderCache: [String: CardLoader] = [:]
+    let quizzes: [QuizID]
+    var quizCache: [QuizID: Quiz] = [:]
+    var cardLoaderCache: [QuizID: CardLoader] = [:]
 
-    init(quizzes: [QuizDefinition]) {
-        self.quizzes = quizzes
-        quizzes.forEach { def in
-            let quiz = loadQuiz(id: def.id)
+    init() {
+        quizzes = Constants.DEBUG ? Constants.PREVIEW_QUIZZES : QuizID.allCases
+        quizzes.forEach { id in
+            let quiz = loadQuiz(id: id)
             if let quiz {
-                quizCache[def.id] = quiz
+                quizCache[id] = quiz
+            } else if !id.parameters.probabilityOrder {
+                quizCache[id] = Quiz(name: id.rawValue, cardLoader: cardLoader(id: id))
             } else {
-                addCardLoader(def: def)
+                initialize(id: id)
             }
         }
     }
     
-    func remove(id: String) {
+    func initialize(id: QuizID) {
         quizCache.removeValue(forKey: id)
-        addCardLoader(def: quizzes.first { $0.id == id }!)
+        cardLoaderCache[id] = cardLoader(id: id)
     }
     
-    func addCardLoader(def: QuizDefinition) {
-        cardLoaderCache[def.id] = CardLoader(quizParameters: def.quizParameters)
+    func cardLoader(id: QuizID) -> CardLoader {
+        return CardLoader(quizParameters: id.parameters)
     }
 }

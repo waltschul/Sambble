@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct InitializeView: View {
-    let quizDefinition: QuizDefinition
+    let quizID: QuizID
     let cardLoader: CardLoader
     let quizCache: QuizCache
     @State var value: Double = 0
@@ -38,6 +38,8 @@ struct InitializeView: View {
     }
     
     func makeQuiz() {
-        quizCache.quizCache[name] = Quiz(name: name, cardLoader: cardLoader, until: card)
+        quizCache.quizCache[quizID] = Quiz(name: quizID.rawValue,
+                                           cardLoader: cardLoader,
+                                           until: card)
     }
 }

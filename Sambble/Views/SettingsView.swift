@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @Binding var selectedQuiz: String
+    @Binding var selectedQuiz: QuizID
     let quizCache: QuizCache
     
     var body: some View {
@@ -11,12 +11,12 @@ struct SettingsView: View {
                     Section(header: Text("Quiz").foregroundColor(Color.blue)) {
                         HStack {
                             Picker("", selection: $selectedQuiz) {
-                                ForEach(quizCache.quizzes, id: \.id) { quizDef in
-                                    Text(quizDef.id)
+                                ForEach(quizCache.quizzes, id: \.self) { quizDef in
+                                    Text(quizDef.rawValue)
                                         .lineLimit(1)
                                         .truncationMode(.tail)
                                         .foregroundColor(Constants.THEME)
-                                        .tag(quizDef.id)
+                                        .tag(quizDef)
                                 }
                             }
                             .pickerStyle(MenuPickerStyle())
@@ -24,21 +24,26 @@ struct SettingsView: View {
                             
                             Spacer() // pushes the button to the right
                             
-                            Button(action: { quizCache.remove(id: selectedQuiz) }) {
-                                Image(systemName: "trash")
-                                    .foregroundColor(.white)              // icon color
-                                    .padding(10)                          // make tappable area bigger
-                                    .background(Color.red)                // background color
-                                    .clipShape(Circle())                  // circular button
-                                    .shadow(radius: 2)                    // subtle shadow for depth
+                            if (selectedQuiz.parameters.probabilityOrder) {
+                                Button(action: { quizCache.initialize(id: selectedQuiz) }) {
+                                    Image(systemName: "trash")
+                                        .foregroundColor(.white)              // icon color
+                                        .padding(10)                          // make tappable area bigger
+                                        .background(Color.red)                // background color
+                                        .clipShape(Circle())                  // circular button
+                                        .shadow(radius: 2)                    // subtle shadow for depth
+                                }
+                                .buttonStyle(PlainButtonStyle())              // avoid default button styling
                             }
-                            .buttonStyle(PlainButtonStyle())              // avoid default button styling
                         }
                     }
                 }
                 .background(Color.black)
                 .scrollContentBackground(.hidden)
             }
+        }
+        .onChange(of: selectedQuiz) { _, newValue in
+            UserDefaults.standard.set(newValue.rawValue, forKey: "selectedQuiz")
         }
     }
 }
