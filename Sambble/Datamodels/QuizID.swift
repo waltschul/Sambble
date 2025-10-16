@@ -1,4 +1,4 @@
-enum QuizID: String, CaseIterable {
+enum QuizID: String, CaseIterable, Codable {
     case THREES = "Threes"
     case FOURS = "Fours"
     case JKQXZ_FIVES = "JKQXZ Fives"

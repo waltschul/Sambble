@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		BE5C16342E9F2E5F0000D31B /* SwiftCSV in Frameworks */ = {isa = PBXBuildFile; productRef = BE5C16332E9F2E5F0000D31B /* SwiftCSV */; };
+		BE5C16372EA169060000D31B /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = BE5C16362EA169060000D31B /* OrderedCollections */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +28,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE5C16372EA169060000D31B /* OrderedCollections in Frameworks */,
 				BE5C16342E9F2E5F0000D31B /* SwiftCSV in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -71,6 +73,7 @@
 			name = Sambble;
 			packageProductDependencies = (
 				BE5C16332E9F2E5F0000D31B /* SwiftCSV */,
+				BE5C16362EA169060000D31B /* OrderedCollections */,
 			);
 			productName = Sambble;
 			productReference = BE681E142E85CBB200B24499 /* Sambble.app */;
@@ -102,6 +105,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				BE5C16322E9F2E5F0000D31B /* XCRemoteSwiftPackageReference "SwiftCSV" */,
+				BE5C16352EA169060000D31B /* XCRemoteSwiftPackageReference "swift-collections" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = BE681E152E85CBB200B24499 /* Products */;
@@ -345,6 +349,14 @@
 				minimumVersion = 0.10.0;
 			};
 		};
+		BE5C16352EA169060000D31B /* XCRemoteSwiftPackageReference "swift-collections" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-collections.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -352,6 +364,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = BE5C16322E9F2E5F0000D31B /* XCRemoteSwiftPackageReference "SwiftCSV" */;
 			productName = SwiftCSV;
+		};
+		BE5C16362EA169060000D31B /* OrderedCollections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BE5C16352EA169060000D31B /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = OrderedCollections;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

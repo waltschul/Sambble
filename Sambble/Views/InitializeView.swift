@@ -9,7 +9,7 @@ struct InitializeView: View {
         min(Int(value), cardLoader.cards.count - 1)
     }
     var card: Card {
-        cardLoader.cards[index]
+        cardLoader.cards.elements[index].value
     }
     
     var body: some View {
@@ -38,7 +38,7 @@ struct InitializeView: View {
     }
     
     func makeQuiz() {
-        quizCache.quizCache[quizID] = Quiz(name: quizID.rawValue,
+        quizCache.quizCache[quizID] = Quiz(quizID: quizID,
                                            cardLoader: cardLoader,
                                            until: card)
     }

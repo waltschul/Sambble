@@ -13,7 +13,7 @@ class QuizCache {
             if let quiz {
                 quizCache[id] = quiz
             } else if !id.parameters.probabilityOrder {
-                quizCache[id] = Quiz(name: id.rawValue, cardLoader: cardLoader(id: id))
+                quizCache[id] = Quiz(quizID: id, cardLoader: cardLoader(id: id))
             } else {
                 initialize(id: id)
             }

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct CardView: View {
     let card: ViewedCard
+    @State private var definedWords: Set<String> = [] // Track revealed word IDs
     
     var body: some View {
         VStack {
@@ -12,12 +13,32 @@ struct CardView: View {
             Spacer().frame(height: 10)
             if (card.checked) {
                 ForEach(card.card.words) { word in
-                    HStack(alignment: .bottom) {
-                        hookText(text: word.frontHooks, alignment: .trailing)
-                        Text(word.id).foregroundColor(.white)
-                        hookText(text: word.backHooks, alignment: .leading)
-                    }
-                    .debugOutline()
+                    VStack(alignment: .center) {
+                            HStack(alignment: .bottom) {
+                                hookText(text: word.frontHooks, alignment: .trailing)
+                                Text(word.id)
+                                    .foregroundColor(.white)
+                                    .debugOutline()
+                                hookText(text: word.backHooks, alignment: .leading)
+                            }
+                        //TODO inconsistent?
+                            .frame(maxWidth: .infinity)
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                if (card.checked) {
+                                    definedWords.insert(word.id)
+                                }
+                            }
+                            .debugOutline()
+                            
+                            if definedWords.contains(word.id) {
+                                Text(word.definition)
+                                    .foregroundColor(.yellow)
+                                    .font(.system(size: 12, weight: .medium))
+                                    .padding(.top, 2)
+                                    .debugOutline()
+                            }
+                        }
                 }
             }
         }
