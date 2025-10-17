@@ -20,3 +20,7 @@ class CardLoader {
         return poppedCards
     }
 }
+
+extension CodingUserInfoKey {
+    static let cardLoader = CodingUserInfoKey(rawValue: "cardLoader")!
+}

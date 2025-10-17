@@ -2,12 +2,13 @@ import Foundation
 
 @Observable
 final class Quiz: Codable {
-    let cardboxAlgorithm: CardboxAlgorithm = CardboxAlgorithm()
     let cardLoader: CardLoader
     
     //Serialized
+    //TODO vars still? lets?
     var quizID: QuizID
     var cardboxes: [[Card]]
+    var cardboxAlgorithm: CardboxAlgorithm
     var currentCard: ViewedCard
     var nextCard: ViewedCard
     
@@ -25,23 +26,12 @@ final class Quiz: Codable {
             .compactMap { $0 }).reduce(0) { $0 + $1.words.count }
     }
     
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(quizID, forKey: ._quizID)
-        try container.encode(currentCard, forKey: ._currentCard)
-        try container.encode(nextCard, forKey: ._nextCard)
-        
-        let cardIDs = cardboxes.map { $0.map { $0.id } }
-        try container.encode(cardIDs, forKey: ._cardboxes)
-    }
-    
     convenience init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let quizID = try container.decode(QuizID.self, forKey: ._quizID)
-        let cardLoader = CardLoader(quizParameters: quizID.parameters)
-        self.init(quizID: quizID,
-                  cardLoader: cardLoader,
-                  cardboxes: (try container.decode([[String]].self, forKey: ._cardboxes)).map { $0.compactMap { cardLoader.removeCard(id: $0)} },
+        self.init(quizID: try container.decode(QuizID.self, forKey: ._quizID),
+                  cardLoader: decoder.userInfo[.cardLoader] as! CardLoader,
+                  cardboxes: try container.decode([[Card]].self, forKey: ._cardboxes),
+                  cardboxAlgorithm: try container.decode(CardboxAlgorithm.self, forKey: ._cardboxAlgorithm),
                   currentCard: try container.decode(ViewedCard.self, forKey: ._currentCard),
                   nextCard: try container.decode(ViewedCard.self, forKey: ._nextCard))
     }
@@ -51,6 +41,7 @@ final class Quiz: Codable {
         self.init(quizID: quizID,
              cardLoader: cardLoader,
              cardboxes: Array(repeating: [], count: Constants.NUM_BOXES),
+             cardboxAlgorithm: CardboxAlgorithm(),
              currentCard: ViewedCard(card: initialCards.removeFirst()),
              nextCard: ViewedCard(card: initialCards.removeFirst())
         )
@@ -60,10 +51,16 @@ final class Quiz: Codable {
         persistQuiz(quiz: self)
     }
     
-    init(quizID: QuizID, cardLoader: CardLoader, cardboxes: [[Card]], currentCard: ViewedCard, nextCard: ViewedCard) {
+    init(quizID: QuizID,
+         cardLoader: CardLoader,
+         cardboxes: [[Card]],
+         cardboxAlgorithm: CardboxAlgorithm,
+         currentCard: ViewedCard,
+         nextCard: ViewedCard) {
         self.quizID = quizID
         self.cardLoader = cardLoader
         self.cardboxes = cardboxes
+        self.cardboxAlgorithm = cardboxAlgorithm
         self.currentCard = currentCard
         self.nextCard = nextCard
     }
@@ -91,8 +88,9 @@ final class Quiz: Codable {
     
     enum CodingKeys: String, CodingKey {
         case _quizID = "quizID"
+        case _cardboxes = "cardboxes"
+        case _cardboxAlgorithm = "cardboxAlgorithm"
         case _currentCard = "currentCard"
         case _nextCard = "nextCard"
-        case _cardboxes = "cardboxes"
     }
 }

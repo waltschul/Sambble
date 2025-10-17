@@ -7,7 +7,7 @@ class QuizCache {
     var cardLoaderCache: [QuizID: CardLoader] = [:]
 
     init() {
-        quizzes = Constants.DEBUG ? Constants.PREVIEW_QUIZZES : QuizID.allCases
+        quizzes = Constants.DEBUG ? Constants.PREVIEW_QUIZZES : [QuizID.SEVENS]
         quizzes.forEach { id in
             let quiz = loadQuiz(id: id)
             if let quiz {

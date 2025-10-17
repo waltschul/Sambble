@@ -25,7 +25,9 @@ struct QuizView: View {
             quiz.advance(correct: index == 0)
             index = 1
         }
-        quiz.currentCard.checked = true
-        persistQuiz(quiz: quiz)
+        if (!quiz.currentCard.checked) {
+            quiz.currentCard.checked = true
+            persistQuiz(quiz: quiz)
+        }
     }
 }
