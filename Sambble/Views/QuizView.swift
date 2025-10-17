@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct QuizView: View {
+    let id: QuizID
     let quiz: Quiz
     @State var index = 1
 
@@ -20,14 +21,14 @@ struct QuizView: View {
     }
     
     func handleCardAnswer() {
-        //TODO data race
+        //TODO data race -- doesn't rlly matter
         if index != 1 {
             quiz.advance(correct: index == 0)
             index = 1
         }
         if (!quiz.currentCard.checked) {
             quiz.currentCard.checked = true
-            persistQuiz(quiz: quiz)
+            persistQuiz(id: id, quiz: quiz)
         }
     }
 }

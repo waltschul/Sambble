@@ -2,7 +2,7 @@ import SwiftUI
 
 struct CardView: View {
     let card: ViewedCard
-    @State private var definedWords: Set<String> = [] // Track revealed word IDs
+    @State var definedWords: Set<String> = []
     
     var body: some View {
         VStack {
@@ -21,29 +21,32 @@ struct CardView: View {
                                     .debugOutline()
                                 hookText(text: word.backHooks, alignment: .leading)
                             }
-                        //TODO inconsistent?
                             .frame(maxWidth: .infinity)
                             .contentShape(Rectangle())
-                            .onTapGesture {
+                            .highPriorityGesture(TapGesture().onEnded {
                                 if (card.checked) {
                                     definedWords.insert(word.id)
                                 }
-                            }
+                            })
                             .debugOutline()
-                            
                             if definedWords.contains(word.id) {
                                 Text(word.definition)
                                     .foregroundColor(.yellow)
-                                    .font(.system(size: 12, weight: .medium))
-                                    .padding(.top, 2)
+                                    .font(.system(size: 12))
+                                    .multilineTextAlignment(.center)
+                                    .lineLimit(nil)
+                                    .italic()
                                     .debugOutline()
                             }
                         }
                 }
             }
         }
-            .frame(height: 150, alignment: .top)
-            .debugOutline()
+        .onChange(of: card.card) { _, _ in
+            definedWords.removeAll()
+        }
+        .frame(height: 150, alignment: .top)
+        .debugOutline()
     }
 }
 

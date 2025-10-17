@@ -26,11 +26,11 @@ struct RootView: View {
                 Color.black.ignoresSafeArea()
                 VStack {
                     if let existingQuiz = quizCache.quizCache[selectedQuiz] {
-                        QuizView(quiz: existingQuiz)
+                        QuizView(id: selectedQuiz, quiz: existingQuiz)
                     } else {
                         InitializeView(
                             quizID: selectedQuiz,
-                            cardLoader: quizCache.cardLoaderCache[selectedQuiz]!,
+                            cardLoader: CardLoader(quizParameters: selectedQuiz.parameters),
                             quizCache: quizCache
                         )
                     }
@@ -41,9 +41,8 @@ struct RootView: View {
                         Image(systemName: "gearshape")
                             .imageScale(.large)
                             .foregroundColor(Constants.THEME)
-                            .contentShape(Rectangle()) // make entire padded area tappable
-
-                    }.padding(.all)
+                            .padding(Constants.OVERLAY_PADDING) // increase tappable area
+                    }
                     .debugOutline(),
                     alignment: .topTrailing)
             }

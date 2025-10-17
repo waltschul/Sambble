@@ -6,7 +6,6 @@ final class Quiz: Codable {
     
     //Serialized
     //TODO vars still? lets?
-    var quizID: QuizID
     var cardboxes: [[Card]]
     var cardboxAlgorithm: CardboxAlgorithm
     var currentCard: ViewedCard
@@ -28,18 +27,16 @@ final class Quiz: Codable {
     
     convenience init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.init(quizID: try container.decode(QuizID.self, forKey: ._quizID),
-                  cardLoader: decoder.userInfo[.cardLoader] as! CardLoader,
+        self.init(cardLoader: decoder.userInfo[.cardLoader] as! CardLoader,
                   cardboxes: try container.decode([[Card]].self, forKey: ._cardboxes),
                   cardboxAlgorithm: try container.decode(CardboxAlgorithm.self, forKey: ._cardboxAlgorithm),
                   currentCard: try container.decode(ViewedCard.self, forKey: ._currentCard),
                   nextCard: try container.decode(ViewedCard.self, forKey: ._nextCard))
     }
     
-    convenience init(quizID: QuizID, cardLoader: CardLoader, until: Card? = nil) {
+    convenience init(cardLoader: CardLoader, until: Card? = nil) {
         var initialCards = cardLoader.popCards(count: 2)
-        self.init(quizID: quizID,
-             cardLoader: cardLoader,
+        self.init(cardLoader: cardLoader,
              cardboxes: Array(repeating: [], count: Constants.NUM_BOXES),
              cardboxAlgorithm: CardboxAlgorithm(),
              currentCard: ViewedCard(card: initialCards.removeFirst()),
@@ -48,16 +45,13 @@ final class Quiz: Codable {
         while until != nil && currentCard.card != until {
             advance(correct: true)
         }
-        persistQuiz(quiz: self)
     }
     
-    init(quizID: QuizID,
-         cardLoader: CardLoader,
+    init(cardLoader: CardLoader,
          cardboxes: [[Card]],
          cardboxAlgorithm: CardboxAlgorithm,
          currentCard: ViewedCard,
          nextCard: ViewedCard) {
-        self.quizID = quizID
         self.cardLoader = cardLoader
         self.cardboxes = cardboxes
         self.cardboxAlgorithm = cardboxAlgorithm
@@ -87,7 +81,6 @@ final class Quiz: Codable {
     }
     
     enum CodingKeys: String, CodingKey {
-        case _quizID = "quizID"
         case _cardboxes = "cardboxes"
         case _cardboxAlgorithm = "cardboxAlgorithm"
         case _currentCard = "currentCard"

@@ -2,11 +2,14 @@ import Foundation
 import OrderedCollections
 
 class CardLoader {
-    var cards: OrderedDictionary<String, Card>
+    let quizParameters: QuizParameters
     
+    lazy var cards: OrderedDictionary<String, Card> = {
+            loadCards(url: Bundle.main.url(forResource: "nwl23", withExtension: "csv")!,
+                      quizParameters: self.quizParameters)}()
+        
     init(quizParameters: QuizParameters) {
-        self.cards = loadCards(url: Bundle.main.url(forResource: "nwl23", withExtension: "csv")!,
-                                          quizParameters: quizParameters)
+        self.quizParameters = quizParameters
     }
     
     func removeCard(id: String) -> Card {

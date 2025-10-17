@@ -8,7 +8,6 @@ struct Constants {
     static let DEBUG = false
     #endif
     
-    static var VERSION = 0
     static let NUM_BOXES: Int = 10
     static let CARDBOX_ZER0_MIN_SIZE = 5
     static let OVERLAY_PADDING: Double = 16

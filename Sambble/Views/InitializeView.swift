@@ -38,8 +38,6 @@ struct InitializeView: View {
     }
     
     func makeQuiz() {
-        quizCache.quizCache[quizID] = Quiz(quizID: quizID,
-                                           cardLoader: cardLoader,
-                                           until: card)
+        quizCache.quizCache[quizID] = Quiz(cardLoader: cardLoader, until: card)
     }
 }

@@ -6,8 +6,8 @@ struct CardSwipeView: View {
     @State var showCorrectFlash: Bool = false
     var flashColor: Color {
         switch index {
-        case 0: return Color(red: 0.5, green: 1.0, blue: 0.5) // soft light green
-        case 2: return Color(red: 1.0, green: 0.5, blue: 0.5) // soft light red
+        case 0: return Color(red: 0.5, green: 1.0, blue: 0.5)
+        case 2: return Color(red: 1.0, green: 0.5, blue: 0.5)
         default: return .clear
         }
     }
@@ -46,6 +46,7 @@ struct CardSwipeView: View {
                     .transition(.opacity)
                     .opacity(0.5)
                     .animation(.easeInOut(duration: 0.3), value: showCorrectFlash)
+                    .allowsHitTesting(false)
             }
         }
     }
