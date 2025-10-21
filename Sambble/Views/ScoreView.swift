@@ -1,9 +1,10 @@
 import SwiftUI
 
 struct ScoreView: View {
+    let id: QuizID
     let quiz: Quiz
     @State var isAnimating = false
-    
+
     var body: some View {
         Text(String(quiz.score))
             .foregroundColor(Constants.THEME)
@@ -17,5 +18,6 @@ struct ScoreView: View {
                 }
             }
             .debugOutline()
+            .shareOnLongPress(items: ["I've studied \(quiz.score) / \(quiz.cardLoader.totalWords) of my Sambble \(id.rawValue)!"])
     }
 }

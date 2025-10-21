@@ -18,11 +18,11 @@ final class Quiz: Codable {
         return counts
     }
     var score: Int {
-        return (cardboxes
-            .dropFirst()
-            .flatMap { $0 } +
-        [currentCard.newBox != 0 ? currentCard.card : nil, nextCard.newBox != 0 ? nextCard.card : nil]
-            .compactMap { $0 }).reduce(0) { $0 + $1.words.count }
+        let cards = cardboxes.dropFirst().flatMap { $0 } + [
+            currentCard.newBox != 0 ? currentCard.card : nil,
+            nextCard.newBox != 0 ? nextCard.card : nil
+        ].compactMap { $0 }
+        return CardLoader.wordCount(cards: cards)
     }
     
     convenience init(from decoder: Decoder) throws {
@@ -65,12 +65,12 @@ final class Quiz: Codable {
         cycleCard()
     }
     
-    private func addCardsToCardboxZero() {
+    func addCardsToCardboxZero() {
         let cardboxZeroDiff = max(Constants.CARDBOX_ZER0_MIN_SIZE - counts[0], 0)
         cardboxes[0].append(contentsOf: cardLoader.popCards(count: cardboxZeroDiff))
     }
     
-    private func cycleCard() {
+    func cycleCard() {
         let markedCard = currentCard
         currentCard = nextCard
         

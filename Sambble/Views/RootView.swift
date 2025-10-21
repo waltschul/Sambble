@@ -13,11 +13,12 @@ struct RootView: View {
         self.quizCache = quizCache
         self.selectedQuiz = quizCache.quizzes.first!
         if let selectedQuiz = UserDefaults.standard.string(forKey: "selectedQuiz") {
+            print (selectedQuiz)
             self.selectedQuiz = QuizID(rawValue: selectedQuiz)!
         } else {
+            print (UserDefaults.standard.string(forKey: "selectedQuiz"))
             self.selectedQuiz = quizCache.quizzes.first!
         }
-        
     }
     
     var body: some View {

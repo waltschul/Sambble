@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct QuizView: View {
+    //TODO serialize QuizID with quiz again
     let id: QuizID
     let quiz: Quiz
     @State var index = 1
@@ -15,7 +16,7 @@ struct QuizView: View {
                 alignment: .topLeading
             )
             .overlay(
-                ScoreView(quiz: quiz),
+                ScoreView(id: id, quiz: quiz),
                 alignment: .top
             )
     }

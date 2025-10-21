@@ -2,14 +2,21 @@ import Foundation
 import OrderedCollections
 
 class CardLoader {
-    let quizParameters: QuizParameters
+    let totalWords: Int
+    var cards: OrderedDictionary<String, Card>
     
-    lazy var cards: OrderedDictionary<String, Card> = {
-            loadCards(url: Bundle.main.url(forResource: "nwl23", withExtension: "csv")!,
-                      quizParameters: self.quizParameters)}()
-        
     init(quizParameters: QuizParameters) {
-        self.quizParameters = quizParameters
+        self.cards = loadCards(url: Bundle.main.url(forResource: "nwl23", withExtension: "csv")!,
+                                          quizParameters: quizParameters)
+        self.totalWords = CardLoader.wordCount(cards: Array(cards.values))
+    }
+    
+    //TODO freq, handle cards empty
+    func treat() -> Card? {
+        guard !cards.isEmpty else { return nil }
+        let halfIndex = cards.count / 2
+        let bottomHalfCards = Array(cards.values[halfIndex...])
+        return removeCard(id: bottomHalfCards.randomElement()!.id)
     }
     
     func removeCard(id: String) -> Card {
@@ -21,6 +28,10 @@ class CardLoader {
         let poppedCards = cards.prefix(count).map { $0.value }
         cards.removeFirst(count)
         return poppedCards
+    }
+    
+    static func wordCount(cards: [Card]) -> Int {
+        return cards.map { $0.words.count }.reduce(0, +)
     }
 }
 

@@ -6,6 +6,7 @@ class ViewedCard: Codable {
     var box: Int
     var checked: Bool
     var correct: Bool?
+//    var treat: Bool
     var newBox: Int {
         switch correct {
         case .some(true):  return min(box + 1, Constants.NUM_BOXES - 1)
@@ -25,6 +26,7 @@ class ViewedCard: Codable {
         case _card = "card"
         case _box = "box"
         case _checked = "checked"
+//        case _treat = "treat"
     }
 }
 

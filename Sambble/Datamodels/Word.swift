@@ -1,4 +1,4 @@
-struct Word: Codable, Identifiable, Equatable {
+struct Word: Identifiable, Equatable {
     let id: String
     let frontHooks: String
     let backHooks: String

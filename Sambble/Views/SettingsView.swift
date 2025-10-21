@@ -8,7 +8,7 @@ struct SettingsView: View {
         NavigationStack {
             VStack {
                 Form {
-                    Section(header: Text("Quiz").foregroundColor(Color.blue)) {
+                    Section(header: Text("Quiz").foregroundColor(Constants.THEME)) {
                         HStack {
                             Picker("", selection: $selectedQuiz) {
                                 ForEach(quizCache.quizzes, id: \.self) { quizDef in

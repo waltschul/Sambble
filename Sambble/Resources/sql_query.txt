@@ -1,0 +1,28 @@
+SELECT
+  w.alphagram,
+  w.word,
+  UPPER(w.front_hooks) AS front_hooks,
+  UPPER(w.back_hooks) AS back_hooks,
+  f.freq,
+  TRIM((
+    WITH RECURSIVE
+      r(s) AS (
+        SELECT REPLACE(w.definition, '< ', '')
+        UNION ALL
+        SELECT
+          CASE
+            WHEN instr(s, '[') = 0 THEN s
+            ELSE
+              substr(s, 1, instr(s, '[') - 1)
+              || substr(s, instr(s, ']') + 1)
+          END
+        FROM r
+        WHERE instr(s, '[') > 0
+      )
+    SELECT s FROM r WHERE instr(s, '[') = 0 LIMIT 1
+  )) AS definition
+FROM words w
+LEFT JOIN freq f ON f.word_upper = w.word
+WHERE w.length <= 8
+  AND w.combinations2 != 0
+ORDER BY w.length ASC, w.probability_order2 ASC;
