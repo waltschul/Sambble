@@ -43,7 +43,8 @@ final class Quiz: Codable {
              nextCard: ViewedCard(card: initialCards.removeFirst())
         )
         while until != nil && currentCard.card != until {
-            advance(correct: true)
+            currentCard.correct = .CORRECT
+            advance()
         }
     }
     
@@ -59,8 +60,7 @@ final class Quiz: Codable {
         self.nextCard = nextCard
     }
     
-    func advance(correct: Bool) {
-        currentCard.correct = correct
+    func advance() {
         addCardsToCardboxZero()
         cycleCard()
     }

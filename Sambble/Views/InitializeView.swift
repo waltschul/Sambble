@@ -32,7 +32,7 @@ struct InitializeView: View {
                 .frame(height: 0)
                 .padding()
                 .debugOutline()
-            CardView(card: ViewedCard(card: card, checked: true))
+            CardView(card: ViewedCard(card: card, checked: AnswerState.CHECKED))
         }
         .debugOutline()
     }

@@ -1,8 +1,14 @@
+.headers on
+.mode csv
+.output nwl23.csv
+
 SELECT
   w.alphagram,
   w.word,
   UPPER(w.front_hooks) AS front_hooks,
   UPPER(w.back_hooks) AS back_hooks,
+  w.is_front_hook,
+  w.is_back_hook,
   f.freq,
   TRIM((
     WITH RECURSIVE

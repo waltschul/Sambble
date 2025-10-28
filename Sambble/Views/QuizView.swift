@@ -24,12 +24,10 @@ struct QuizView: View {
     func handleCardAnswer() {
         //TODO data race -- doesn't rlly matter
         if index != 1 {
-            quiz.advance(correct: index == 0)
+            quiz.advance()
             index = 1
         }
-        if (!quiz.currentCard.checked) {
-            quiz.currentCard.checked = true
-            persistQuiz(id: id, quiz: quiz)
-        }
+        quiz.currentCard.checked = quiz.currentCard.checked.nextState()
+        persistQuiz(id: id, quiz: quiz)
     }
 }

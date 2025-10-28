@@ -9,8 +9,8 @@ func loadCards(url: URL, quizParameters: QuizParameters) -> OrderedDictionary<St
          .forEach { row in
              let word = Word(
                  id: row["word"]!,
-                 frontHooks: row["front_hooks"]!,
-                 backHooks: row["back_hooks"]!,
+                 frontHooks: row["front_hooks"]! + (row["is_front_hook"]! == "1" ? "•" : ""),
+                 backHooks: (row["is_back_hook"]! == "1" ? "•" : "") + row["back_hooks"]!,
                  definition: row["definition"]!
              )
              let alphagram = row["alphagram"]!
@@ -22,7 +22,6 @@ func loadCards(url: URL, quizParameters: QuizParameters) -> OrderedDictionary<St
             (alphagram, Card(id: alphagram, words: words))
         }
     )
-    //TODO is this no-op or not?
     if (!quizParameters.probabilityOrder) {
         cards.shuffle()
     }

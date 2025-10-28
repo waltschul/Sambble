@@ -6,7 +6,7 @@ struct CardSwipeView: View {
     @State var showCorrectFlash: Bool = false
     var flashColor: Color {
         switch index {
-        case 0: return Color(red: 0.5, green: 1.0, blue: 0.5)
+        case 0: return Constants.GREEN
         case 2: return Color(red: 1.0, green: 0.5, blue: 0.5)
         default: return .clear
         }
@@ -20,12 +20,12 @@ struct CardSwipeView: View {
                 CardView(card: quiz.nextCard).tag(2)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
-            .disabled(!quiz.currentCard.checked || index != 1)
+            .disabled(quiz.currentCard.checked == .UNCHECKED || index != 1)
             .debugOutline()
             .onChange(of: index) { _, newIndex in
-                quiz.currentCard.correct = newIndex == 1 ? nil : (newIndex == 0)
+                quiz.currentCard.correct = CorrectState(rawValue: newIndex)!
                 if newIndex != 1 {
-                    withAnimation(.easeIn(duration: 0.1)) {  // fade in
+                    withAnimation(.easeIn(duration: 0.1)) {
                         showCorrectFlash = true
                     }
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
