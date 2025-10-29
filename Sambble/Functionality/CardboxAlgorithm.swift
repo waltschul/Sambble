@@ -3,6 +3,7 @@ class CardboxAlgorithm: Codable {
     
     func nextCardbox(cardboxes: [[Card]]) -> Int {
         count += 1
+        print("[DEBUG] count: \(count), cardboxes states: \(cardboxes.map { $0.count })")
         let cardbox = Array(cardboxes.enumerated())
             .lastIndex { !$1.isEmpty && count % (1 << $0) == 0 }
             ?? cardboxes.lastIndex { !$0.isEmpty }!

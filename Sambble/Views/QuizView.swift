@@ -10,15 +10,6 @@ struct QuizView: View {
         CardSwipeView(quiz: quiz, index: $index)
             .background(Color.clear.contentShape(Rectangle()).ignoresSafeArea())
             .onTapGesture { handleCardAnswer() }
-            .overlay(
-                CardboxView(quiz: quiz)
-                    .padding(.all),
-                alignment: .topLeading
-            )
-            .overlay(
-                ScoreView(id: id, quiz: quiz),
-                alignment: .top
-            )
     }
     
     func handleCardAnswer() {

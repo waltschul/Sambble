@@ -1,24 +1,18 @@
 import SwiftUI
 
 #Preview {
-    RootView()
+    RootView().environmentObject(SettingsStore.shared)
 }
 
 struct RootView: View {
     @State var quizCache: QuizCache
-    @State var selectedQuiz: QuizID
+    @EnvironmentObject var settings: SettingsStore
+    private var selectedQuiz: QuizID {
+        settings.selectedQuiz
+    }
     
     init() {
-        let quizCache = QuizCache()
-        self.quizCache = quizCache
-        self.selectedQuiz = quizCache.quizzes.first!
-        if let selectedQuiz = UserDefaults.standard.string(forKey: "selectedQuiz") {
-            print (selectedQuiz)
-            self.selectedQuiz = QuizID(rawValue: selectedQuiz)!
-        } else {
-            print (UserDefaults.standard.string(forKey: "selectedQuiz"))
-            self.selectedQuiz = quizCache.quizzes.first!
-        }
+        self.quizCache = QuizCache()
     }
     
     var body: some View {
@@ -27,7 +21,18 @@ struct RootView: View {
                 Color.black.ignoresSafeArea()
                 VStack {
                     if let existingQuiz = quizCache.quizCache[selectedQuiz] {
-                        QuizView(id: selectedQuiz, quiz: existingQuiz)
+                        QuizView(id: selectedQuiz,
+                                 quiz: existingQuiz)
+                        .overlay(
+                            CardboxView(quiz: existingQuiz)
+                                .padding(.all),
+                            alignment: .topLeading
+                        )
+                        .overlay(
+                            ScoreView(id: selectedQuiz,
+                                      quiz: existingQuiz),
+                            alignment: .top
+                        )
                     } else {
                         InitializeView(
                             quizID: selectedQuiz,
@@ -38,10 +43,10 @@ struct RootView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .overlay(
-                    NavigationLink(destination: SettingsView(selectedQuiz: $selectedQuiz, quizCache: quizCache)) {
+                    NavigationLink(destination: SettingsView(quizCache: quizCache, settings: settings)) {
                         Image(systemName: "gearshape")
                             .imageScale(.large)
-                            .foregroundColor(Constants.THEME)
+                            .foregroundColor(settings.themeColor)
                             .padding(Constants.OVERLAY_PADDING) // increase tappable area
                     }
                     .debugOutline(),

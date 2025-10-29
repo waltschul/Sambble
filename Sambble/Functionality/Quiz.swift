@@ -66,7 +66,7 @@ final class Quiz: Codable {
     }
     
     func addCardsToCardboxZero() {
-        let cardboxZeroDiff = max(Constants.CARDBOX_ZER0_MIN_SIZE - counts[0], 0)
+        let cardboxZeroDiff = max(SettingsStore.shared.cardboxZeroSize - counts[0], 0)
         cardboxes[0].append(contentsOf: cardLoader.popCards(count: cardboxZeroDiff))
     }
     

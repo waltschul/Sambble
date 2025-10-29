@@ -2,8 +2,9 @@ import SwiftUI
 
 struct CardView: View {
     let card: ViewedCard
+    @EnvironmentObject var settings: SettingsStore
     var color: Color {
-        card.checked == .EASY ? Constants.GREEN : .white
+        card.checked == .EASY ? settings.themeColor : .white
     }
     @State var definedWords: Set<String> = []
     

@@ -10,7 +10,7 @@ class ViewedCard: Codable {
     var newBox: Int {
         switch correct {
             //TODO configurable
-            case .CORRECT:  return min(box + (checked == .EASY ? 5 : 1), Constants.NUM_BOXES - 1)
+        case .CORRECT:  return min(box + (checked == .EASY ? SettingsStore.shared.easyAnswerShift : 1), Constants.NUM_BOXES - 1)
             case .INCORRECT: return 0
             case .UNANSWERED:   return box
         }

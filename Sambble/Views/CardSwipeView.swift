@@ -4,9 +4,10 @@ struct CardSwipeView: View {
     let quiz: Quiz
     @Binding var index: Int
     @State var showCorrectFlash: Bool = false
+    @EnvironmentObject var settings: SettingsStore
     var flashColor: Color {
         switch index {
-        case 0: return Constants.GREEN
+        case 0: return settings.themeColor
         case 2: return Color(red: 1.0, green: 0.5, blue: 0.5)
         default: return .clear
         }

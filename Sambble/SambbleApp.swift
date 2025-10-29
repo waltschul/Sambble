@@ -11,7 +11,7 @@ import SwiftUI
 struct SambbleApp: App {
     var body: some Scene {
         WindowGroup {
-            RootView()
+            RootView().environmentObject(SettingsStore.shared)
         }
     }
 }

@@ -4,6 +4,7 @@ struct InitializeView: View {
     let quizID: QuizID
     let cardLoader: CardLoader
     let quizCache: QuizCache
+    @EnvironmentObject var settings: SettingsStore
     @State var value: Double = 0
     var index: Int {
         min(Int(value), cardLoader.cards.count - 1)
@@ -19,7 +20,7 @@ struct InitializeView: View {
                     .font(.title)
                     .foregroundColor(.white)
                     .padding(16)
-                    .background(Circle().fill(Constants.THEME))
+                    .background(Circle().fill(settings.themeColor))
                     .shadow(radius: 4)
             }
             .padding(.bottom, 8)
@@ -28,7 +29,7 @@ struct InitializeView: View {
                 .foregroundColor(.white)
                 .debugOutline()
             Slider(value: $value, in: 0...Double(cardLoader.cards.count))
-                .accentColor(Constants.THEME)
+                .accentColor(settings.themeColor)
                 .frame(height: 0)
                 .padding()
                 .debugOutline()
