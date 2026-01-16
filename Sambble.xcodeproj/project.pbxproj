@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BE2D1B292F1ADBAE00786FB0 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = BE2D1B282F1ADBAE00786FB0 /* SwiftSoup */; };
 		BE5C16342E9F2E5F0000D31B /* SwiftCSV in Frameworks */ = {isa = PBXBuildFile; productRef = BE5C16332E9F2E5F0000D31B /* SwiftCSV */; };
 		BE5C16372EA169060000D31B /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = BE5C16362EA169060000D31B /* OrderedCollections */; };
 /* End PBXBuildFile section */
@@ -15,9 +16,22 @@
 		BE681E142E85CBB200B24499 /* Sambble.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sambble.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		BE2D1B222F117B6000786FB0 /* Exceptions for "Sambble" folder in "Sambble" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = BE681E132E85CBB200B24499 /* Sambble */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		BE681E162E85CBB200B24499 /* Sambble */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				BE2D1B222F117B6000786FB0 /* Exceptions for "Sambble" folder in "Sambble" target */,
+			);
 			path = Sambble;
 			sourceTree = "<group>";
 		};
@@ -30,6 +44,7 @@
 			files = (
 				BE5C16372EA169060000D31B /* OrderedCollections in Frameworks */,
 				BE5C16342E9F2E5F0000D31B /* SwiftCSV in Frameworks */,
+				BE2D1B292F1ADBAE00786FB0 /* SwiftSoup in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -74,6 +89,7 @@
 			packageProductDependencies = (
 				BE5C16332E9F2E5F0000D31B /* SwiftCSV */,
 				BE5C16362EA169060000D31B /* OrderedCollections */,
+				BE2D1B282F1ADBAE00786FB0 /* SwiftSoup */,
 			);
 			productName = Sambble;
 			productReference = BE681E142E85CBB200B24499 /* Sambble.app */;
@@ -106,6 +122,7 @@
 			packageReferences = (
 				BE5C16322E9F2E5F0000D31B /* XCRemoteSwiftPackageReference "SwiftCSV" */,
 				BE5C16352EA169060000D31B /* XCRemoteSwiftPackageReference "swift-collections" */,
+				BE2D1B272F1ADBAE00786FB0 /* XCRemoteSwiftPackageReference "SwiftSoup" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = BE681E152E85CBB200B24499 /* Products */;
@@ -269,6 +286,7 @@
 				DEVELOPMENT_TEAM = MUJS8R7MXP;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Sambble/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -299,6 +317,7 @@
 				DEVELOPMENT_TEAM = MUJS8R7MXP;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Sambble/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -341,6 +360,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		BE2D1B272F1ADBAE00786FB0 /* XCRemoteSwiftPackageReference "SwiftSoup" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/scinfu/SwiftSoup.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.11.3;
+			};
+		};
 		BE5C16322E9F2E5F0000D31B /* XCRemoteSwiftPackageReference "SwiftCSV" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/swiftcsv/SwiftCSV.git";
@@ -360,6 +387,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		BE2D1B282F1ADBAE00786FB0 /* SwiftSoup */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BE2D1B272F1ADBAE00786FB0 /* XCRemoteSwiftPackageReference "SwiftSoup" */;
+			productName = SwiftSoup;
+		};
 		BE5C16332E9F2E5F0000D31B /* SwiftCSV */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = BE5C16322E9F2E5F0000D31B /* XCRemoteSwiftPackageReference "SwiftCSV" */;

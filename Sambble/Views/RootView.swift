@@ -21,8 +21,8 @@ struct RootView: View {
                 Color.black.ignoresSafeArea()
                 VStack {
                     if let existingQuiz = quizCache.quizCache[selectedQuiz] {
-                        QuizView(id: selectedQuiz,
-                                 quiz: existingQuiz)
+                        QuizView(id: selectedQuiz, quiz: existingQuiz)
+                        .id(selectedQuiz)
                         .overlay(
                             CardboxView(quiz: existingQuiz)
                                 .padding(.all),

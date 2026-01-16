@@ -6,12 +6,18 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 @main
 struct SambbleApp: App {
     var body: some Scene {
         WindowGroup {
-            RootView().environmentObject(SettingsStore.shared)
+            RootView()
+                .environmentObject(SettingsStore.shared)
+                .onAppear() {
+                    MediaCommandManager.shared.start()
+                    SilentAudioPlayer.shared.start()
+                }
         }
     }
 }

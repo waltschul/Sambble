@@ -1,24 +1,17 @@
 import SwiftUI
 
 struct QuizView: View {
-    //TODO serialize QuizID with quiz again
-    let id: QuizID
-    let quiz: Quiz
-    @State var index = 1
+    @StateObject private var vm: QuizViewModel
+
+    init(id: QuizID, quiz: Quiz) {
+        _vm = StateObject(wrappedValue: QuizViewModel(id: id, quiz: quiz))
+    }
 
     var body: some View {
-        CardSwipeView(quiz: quiz, index: $index)
+        CardSwipeView(quiz: vm.quiz, index: $vm.index)
             .background(Color.clear.contentShape(Rectangle()).ignoresSafeArea())
-            .onTapGesture { handleCardAnswer() }
-    }
-    
-    func handleCardAnswer() {
-        //TODO data race -- doesn't rlly matter
-        if index != 1 {
-            quiz.advance()
-            index = 1
-        }
-        quiz.currentCard.checked = quiz.currentCard.checked.nextState()
-        persistQuiz(id: id, quiz: quiz)
+            .onTapGesture {
+                vm.handleCardAnswer()
+            }
     }
 }
