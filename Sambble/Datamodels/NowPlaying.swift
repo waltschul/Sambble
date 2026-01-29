@@ -13,12 +13,12 @@ struct NowPlaying {
             NowPlaying(
                 album: "Help!",
                 title: "I'm trapped in an",
-                artist: "Alphagram factory"
+                artist: "alphagram factory"
             ),
             NowPlaying(
                 album: "Sambble",
-                title: "Sam Masling current ELO: \(samRating)",
-                artist: "Dan Wachtell current ELO: \(danRating)"
+                title: "Sam Masling rating: \(samRating)",
+                artist: "Dan Wachtell rating: \(danRating)"
             )
         ]
     }

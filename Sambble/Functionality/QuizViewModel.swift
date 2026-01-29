@@ -45,7 +45,5 @@ extension QuizViewModel {
                 self?.handleCardAnswer();
             }
         }
-
-        media.updateNowPlaying()
     }
 }

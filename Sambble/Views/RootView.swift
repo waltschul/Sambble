@@ -20,9 +20,9 @@ struct RootView: View {
             ZStack {
                 Color.black.ignoresSafeArea()
                 VStack {
-                    if let existingQuiz = quizCache.quizCache[selectedQuiz] {
+                    if let existingQuiz = quizCache.quizCache[seletedQuiz] {
                         QuizView(id: selectedQuiz, quiz: existingQuiz)
-                        .id(selectedQuiz)
+                        .id(ObjectIdentifier(existingQuiz))
                         .overlay(
                             CardboxView(quiz: existingQuiz)
                                 .padding(.all),

@@ -15,8 +15,8 @@ struct SambbleApp: App {
             RootView()
                 .environmentObject(SettingsStore.shared)
                 .onAppear() {
-                    MediaCommandManager.shared.start()
                     SilentAudioPlayer.shared.start()
+                    MediaCommandManager.shared.start()
                 }
         }
     }

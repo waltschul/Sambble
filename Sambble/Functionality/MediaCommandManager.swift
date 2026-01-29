@@ -24,6 +24,7 @@ final class MediaCommandManager: ObservableObject {
     func initializeNowPlaying() {
         Task {
             nowPlaying = await NowPlaying.presets().randomElement()!
+            updateNowPlaying()
         }
     }
 
@@ -31,14 +32,15 @@ final class MediaCommandManager: ObservableObject {
         let session = AVAudioSession.sharedInstance()
         do {
             print("Setting audio session")
-            try session.setCategory(
-                            .playback,
-                            mode: .spokenAudio,
-                            options: [.mixWithOthers, .duckOthers]
-                        )
+            try session.setCategory(.playback, mode: .default)
             try session.setActive(true)
-            print("Audio session category:", session.category.rawValue)
-            print("Audio session mode:", session.mode.rawValue)
+            
+            print("Audio session active:", session.isOtherAudioPlaying)
+            print("Category:", session.category.rawValue)
+            print("Mode:", session.mode.rawValue)
+            
+            
+            
         } catch {
             print("Audio session error:", error)
         }
@@ -64,8 +66,12 @@ final class MediaCommandManager: ObservableObject {
     }
 
     func updateNowPlaying() {
-        guard let nowPlaying = nowPlaying else { return }
-        var info: [String: Any] = [
+        guard let nowPlaying = nowPlaying else {
+            print("⚠️ updateNowPlaying called but nowPlaying is nil")
+            return
+        }
+        
+        let info: [String: Any] = [
             MPMediaItemPropertyTitle: nowPlaying.title,
             MPMediaItemPropertyAlbumTitle: nowPlaying.album,
             MPMediaItemPropertyArtist: nowPlaying.artist,
