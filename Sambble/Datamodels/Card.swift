@@ -1,7 +1,7 @@
 enum CardStatus: String, Codable, Equatable {
     case normal
     case new
-    case special
+    case treat
 }
 
 struct Card: Codable, Equatable {

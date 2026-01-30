@@ -3,9 +3,11 @@ import OrderedCollections
 
 class CardLoader {
     let totalWords: Int
+    let probabilityOrder: Bool
     var cards: OrderedDictionary<String, Card>
-    
+
     init(quizParameters: QuizParameters) {
+        self.probabilityOrder = quizParameters.probabilityOrder
         self.cards = loadCards(url: Bundle.main.url(forResource: "nwl23", withExtension: "csv")!,
                                           quizParameters: quizParameters)
         self.totalWords = CardLoader.wordCount(cards: Array(cards.values))
@@ -24,10 +26,20 @@ class CardLoader {
     }
     
     func popCards(count: Int) -> [Card] {
-        let count = min(count, cards.count)
-        let poppedCards = cards.prefix(count).map { $0.value }
-        cards.removeFirst(count)
-        return poppedCards.map { Card(id: $0.id, words: $0.words, status: .new) }
+        let limit = min(count, cards.count)
+        var result: [Card] = []
+        let treatChance = 2
+        for _ in 0..<limit {
+            guard !cards.isEmpty else { break }
+            if probabilityOrder, Int.random(in: 0..<treatChance) == 0, cards.count > 1, let t = treat() {
+                result.append(Card(id: t.id, words: t.words, status: .treat))
+            } else {
+                let key = cards.keys.first!
+                let first = cards.removeValue(forKey: key)!
+                result.append(Card(id: first.id, words: first.words, status: .new))
+            }
+        }
+        return result
     }
     
     static func wordCount(cards: [Card]) -> Int {
