@@ -27,7 +27,7 @@ class CardLoader {
         let count = min(count, cards.count)
         let poppedCards = cards.prefix(count).map { $0.value }
         cards.removeFirst(count)
-        return poppedCards
+        return poppedCards.map { Card(id: $0.id, words: $0.words, status: .new) }
     }
     
     static func wordCount(cards: [Card]) -> Int {

@@ -10,7 +10,6 @@ struct Constants {
     
     static let NUM_BOXES: Int = 10
     static let CARDBOX_ZERO_SIZE_DEFAULT = 5
-    static let EASY_ANSWER_SHIFT_DEFAULT = 5
     static let THEME_COLOR_DEFAULT = Color.mint
     static let OVERLAY_PADDING: Double = 16
     static let GREEN = Color(red: 0.5, green: 1.0, blue: 0.5)

@@ -5,8 +5,6 @@ final class SettingsStore: ObservableObject {
     static let shared = SettingsStore()
 
     @AppStorage("SELECTED_QUIZ") var selectedQuiz: QuizID = QuizID.SEVENS
-    @AppStorage("CARDBOX_ZERO_SIZE") var cardboxZeroSize: Int = Constants.CARDBOX_ZERO_SIZE_DEFAULT
-    @AppStorage("EASY_ANSWER_SHIFT") var easyAnswerShift: Int = Constants.EASY_ANSWER_SHIFT_DEFAULT
     @AppStorage("THEME_COLOR") var themeColorData: Data = Constants.THEME_COLOR_DEFAULT.encode()
 
     var themeColor: Color {

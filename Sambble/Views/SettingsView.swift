@@ -3,16 +3,7 @@ import SwiftUI
 struct SettingsView: View {
     let quizCache: QuizCache
     @EnvironmentObject var settings: SettingsStore
-    
-    @State private var cardboxZeroSizeLocal: Double
-    @State private var easyAnswerShiftLocal: Double
 
-    init(quizCache: QuizCache, settings: SettingsStore) {
-        self.quizCache = quizCache
-        _cardboxZeroSizeLocal = State(initialValue: Double(settings.cardboxZeroSize))
-        _easyAnswerShiftLocal = State(initialValue: Double(settings.easyAnswerShift))
-    }
-    
     var body: some View {
         NavigationStack {
             VStack {
@@ -45,34 +36,8 @@ struct SettingsView: View {
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
-                    }
-                    
-                    Section(header: Text("Cardbox 0 Size").foregroundColor(.blue)) {
-                        VStack(alignment: .leading) {
-                            Slider(value: $cardboxZeroSizeLocal, in: 5...100, step: 1) { isEditing in
-                                if !isEditing {
-                                    settings.cardboxZeroSize = Int(cardboxZeroSizeLocal)
-                                }
-                            }
-                            Text("\(Int(cardboxZeroSizeLocal))")
-                                .foregroundColor(.gray)
-                        }
-                    }
-                    
-                    Section(header: Text("Shift easy cards by # boxes").foregroundColor(.blue)) {
-                        VStack(alignment: .leading) {
-                            Slider(
-                                value: $easyAnswerShiftLocal,
-                                in: 5...9,
-                                step: 1
-                            ) { isEditing in
-                                if !isEditing {
-                                    settings.easyAnswerShift = Int(easyAnswerShiftLocal)
-                                }
-                            }
-                            Text("\(Int(easyAnswerShiftLocal))")
-                                .foregroundColor(.gray)
-                        }
+                        QuizCardsPreviewView(quiz: quizCache.quizCache[settings.selectedQuiz], quizID: settings.selectedQuiz)
+                            .padding(.top, 4)
                     }
                     
                     ColorPicker(

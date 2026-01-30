@@ -10,10 +10,23 @@ struct CardView: View {
     
     var body: some View {
         VStack {
-            Text(card.card.id)
-                .font(.system(size: 48, weight: .bold, design: .monospaced))
-                .foregroundColor(color)
-                .frame(maxWidth: .infinity)
+            HStack {
+                Spacer(minLength: 0)
+                Text(card.card.id)
+                    .font(.system(size: 48, weight: .bold, design: .monospaced))
+                    .foregroundColor(color)
+                    .overlay(alignment: .topTrailing) {
+                        if card.card.status == .new {
+                            Image(systemName: "sparkles")
+                                .font(.system(size: 16))
+                                .foregroundColor(settings.themeColor)
+                                .padding(.top, 4)
+                                .offset(x: 24)
+                        }
+                    }
+                Spacer(minLength: 0)
+            }
+            .frame(maxWidth: .infinity)
             Spacer().frame(height: 10)
             if (card.checked != .UNCHECKED) {
                 ForEach(card.card.words) { word in
