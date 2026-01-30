@@ -28,7 +28,7 @@ class CardLoader {
     func popCards(count: Int) -> [Card] {
         let limit = min(count, cards.count)
         var result: [Card] = []
-        let treatChance = 2
+        let treatChance = Constants.DEBUG ? 2 : 25
         for _ in 0..<limit {
             guard !cards.isEmpty else { break }
             if probabilityOrder, Int.random(in: 0..<treatChance) == 0, cards.count > 1, let t = treat() {
