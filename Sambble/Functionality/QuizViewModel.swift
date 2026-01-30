@@ -4,11 +4,12 @@ final class QuizViewModel: ObservableObject {
     let id: QuizID
     let quiz: Quiz
 
-    @Published var index: Int = 1
+    @Published var index: Int
 
     init(id: QuizID, quiz: Quiz) {
         self.id = id
         self.quiz = quiz
+        self.index = quiz.index
         registerMediaCommands()
     }
 
@@ -19,6 +20,7 @@ final class QuizViewModel: ObservableObject {
             index = 1
         }
         quiz.currentCard.checked = quiz.currentCard.checked.nextState()
+        quiz.index = index
         persistQuiz(id: id, quiz: quiz)
     }
 }

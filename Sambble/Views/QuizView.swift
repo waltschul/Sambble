@@ -13,5 +13,8 @@ struct QuizView: View {
             .onTapGesture {
                 vm.handleCardAnswer()
             }
+            .onChange(of: vm.index) { _, newIndex in
+                vm.quiz.index = newIndex
+            }
     }
 }

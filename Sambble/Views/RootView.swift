@@ -7,6 +7,8 @@ import SwiftUI
 struct RootView: View {
     @State var quizCache: QuizCache
     @EnvironmentObject var settings: SettingsStore
+    @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
     private var selectedQuiz: QuizID {
         settings.selectedQuiz
     }
@@ -24,8 +26,12 @@ struct RootView: View {
                         QuizView(id: selectedQuiz, quiz: existingQuiz)
                             .id(ObjectIdentifier(existingQuiz))
                             .overlay(
-                                CardboxView(quiz: existingQuiz)
-                                    .padding(.all),
+                                Group {
+                                    if verticalSizeClass != .compact {
+                                        CardboxView(quiz: existingQuiz)
+                                            .padding(.all)
+                                    }
+                                },
                                 alignment: .topLeading
                             )
                             .overlay(
@@ -50,6 +56,11 @@ struct RootView: View {
                     }
                     .debugOutline(),
                     alignment: .topTrailing)
+            }
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .background, let quiz = quizCache.quizCache[selectedQuiz] {
+                persistQuiz(id: selectedQuiz, quiz: quiz)
             }
         }
     }

@@ -11,6 +11,7 @@ final class Quiz: Codable {
     var currentCard: ViewedCard
     var nextCard: ViewedCard
     var cardboxZeroSize: Int
+    var index: Int
     
     var counts: [Int] {
         var counts = cardboxes.map { $0.count }
@@ -33,7 +34,8 @@ final class Quiz: Codable {
                   cardboxAlgorithm: try container.decode(CardboxAlgorithm.self, forKey: ._cardboxAlgorithm),
                   currentCard: try container.decode(ViewedCard.self, forKey: ._currentCard),
                   nextCard: try container.decode(ViewedCard.self, forKey: ._nextCard),
-                  cardboxZeroSize: try container.decodeIfPresent(Int.self, forKey: ._cardboxZeroSize) ?? Constants.CARDBOX_ZERO_SIZE_DEFAULT)
+                  cardboxZeroSize: try container.decodeIfPresent(Int.self, forKey: ._cardboxZeroSize) ?? Constants.CARDBOX_ZERO_SIZE_DEFAULT,
+                  index: try container.decodeIfPresent(Int.self, forKey: ._index) ?? 1)
     }
     
     convenience init(cardLoader: CardLoader, until: Card? = nil) {
@@ -43,7 +45,8 @@ final class Quiz: Codable {
              cardboxAlgorithm: CardboxAlgorithm(),
              currentCard: ViewedCard(card: initialCards.removeFirst()),
              nextCard: ViewedCard(card: initialCards.removeFirst()),
-             cardboxZeroSize: Constants.CARDBOX_ZERO_SIZE_DEFAULT
+             cardboxZeroSize: Constants.CARDBOX_ZERO_SIZE_DEFAULT,
+             index: 1
         )
         while until != nil && currentCard.card != until {
             currentCard.correct = .CORRECT
@@ -56,13 +59,15 @@ final class Quiz: Codable {
          cardboxAlgorithm: CardboxAlgorithm,
          currentCard: ViewedCard,
          nextCard: ViewedCard,
-         cardboxZeroSize: Int = Constants.CARDBOX_ZERO_SIZE_DEFAULT) {
+         cardboxZeroSize: Int = Constants.CARDBOX_ZERO_SIZE_DEFAULT,
+         index: Int = 1) {
         self.cardLoader = cardLoader
         self.cardboxes = cardboxes
         self.cardboxAlgorithm = cardboxAlgorithm
         self.currentCard = currentCard
         self.nextCard = nextCard
         self.cardboxZeroSize = cardboxZeroSize
+        self.index = index
     }
     
     func advance() {
@@ -91,5 +96,6 @@ final class Quiz: Codable {
         case _currentCard = "currentCard"
         case _nextCard = "nextCard"
         case _cardboxZeroSize = "cardboxZeroSize"
+        case _index = "index"
     }
 }

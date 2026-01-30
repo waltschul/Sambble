@@ -9,10 +9,10 @@ struct QuizCardsPreviewView: View {
         guard let quiz else { return [] }
         var cards = quiz.cardboxes[boxIndex]
         if quiz.currentCard.newBox == boxIndex {
-            cards.append(quiz.currentCard.card)
+            cards.insert(quiz.currentCard.card, at: 0)
         }
         if quiz.nextCard.newBox == boxIndex {
-            cards.append(quiz.nextCard.card)
+            cards.insert(quiz.nextCard.card, at: 0)
         }
         return cards
     }
