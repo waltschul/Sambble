@@ -51,7 +51,6 @@ struct CardView: View {
                                     HStack(alignment: .bottom) {
                                         hookText(text: word.frontHooks, alignment: .trailing, size: hookFontSize)
                                         Text(word.id)
-                                            .font(.system(size: wordFontSize, design: .monospaced))
                                             .foregroundColor(color)
                                             .debugOutline()
                                         hookText(text: word.backHooks, alignment: .leading, size: hookFontSize)
