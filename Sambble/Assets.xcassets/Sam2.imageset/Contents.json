@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Sam2.jpeg",
+      "filename" : "download.jpg",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Sam2 1.jpeg",
+      "filename" : "download 1.jpg",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Sam2 2.jpeg",
+      "filename" : "download 2.jpg",
       "idiom" : "universal",
       "scale" : "3x"
     }

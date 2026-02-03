@@ -1,5 +1,6 @@
 import AVFoundation
 import MediaPlayer
+import UIKit
 
 final class MediaCommandManager: ObservableObject {
     static let shared = MediaCommandManager()
@@ -71,12 +72,20 @@ final class MediaCommandManager: ObservableObject {
             return
         }
         
-        let info: [String: Any] = [
+        var info: [String: Any] = [
             MPMediaItemPropertyTitle: nowPlaying.title,
             MPMediaItemPropertyAlbumTitle: nowPlaying.album,
             MPMediaItemPropertyArtist: nowPlaying.artist,
             MPNowPlayingInfoPropertyPlaybackRate: 1.0
         ]
+        
+        // Add artwork if available
+        if let artworkImage = nowPlaying.artworkImage {
+            let artwork = MPMediaItemArtwork(boundsSize: artworkImage.size) { _ in
+                artworkImage
+            }
+            info[MPMediaItemPropertyArtwork] = artwork
+        }
 
         MPNowPlayingInfoCenter.default().nowPlayingInfo = info
     }
