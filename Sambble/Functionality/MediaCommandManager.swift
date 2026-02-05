@@ -33,7 +33,10 @@ final class MediaCommandManager: ObservableObject {
         let session = AVAudioSession.sharedInstance()
         do {
             print("Setting audio session")
-            try session.setCategory(.playback, mode: .default)
+            // If car mode is OFF, allow mixing with other audio (like Spotify)
+            // If car mode is ON, use exclusive audio for media controls
+            let options: AVAudioSession.CategoryOptions = SettingsStore.shared.carMode ? [] : [.mixWithOthers]
+            try session.setCategory(.playback, mode: .default, options: options)
             try session.setActive(true)
             
             print("Audio session active:", session.isOtherAudioPlaying)

@@ -49,6 +49,12 @@ struct SettingsView: View {
                         supportsOpacity: false
                     )
                     .foregroundColor(.blue)
+
+                    Toggle("Car Mode", isOn: Binding(
+                        get: { settings.carMode },
+                        set: { settings.carMode = $0 }
+                    ))
+                    .foregroundColor(.blue)
                 }
                 .background(Color.black)
                 .scrollContentBackground(.hidden)
