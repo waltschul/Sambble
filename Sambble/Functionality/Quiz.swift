@@ -39,7 +39,7 @@ final class Quiz: Codable {
     }
     
     convenience init(cardLoader: CardLoader, until: Card? = nil) {
-        var initialCards = cardLoader.popCards(count: 2)
+        var initialCards = cardLoader.popCards(count: 2, allowTreats: false)
         self.init(cardLoader: cardLoader,
              cardboxes: Array(repeating: [], count: Constants.NUM_BOXES),
              cardboxAlgorithm: CardboxAlgorithm(),
@@ -50,7 +50,7 @@ final class Quiz: Codable {
         )
         while until != nil && currentCard.card != until {
             currentCard.correct = .CORRECT
-            advance()
+            advance(allowTreats: false)
         }
     }
     
@@ -70,14 +70,14 @@ final class Quiz: Codable {
         self.index = index
     }
     
-    func advance() {
-        addCardsToCardboxZero()
+    func advance(allowTreats: Bool = true) {
+        addCardsToCardboxZero(allowTreats: allowTreats)
         cycleCard()
     }
     
-    func addCardsToCardboxZero() {
+    func addCardsToCardboxZero(allowTreats: Bool = true) {
         let cardboxZeroDiff = max(cardboxZeroSize - counts[0], 0)
-        cardboxes[0].append(contentsOf: cardLoader.popCards(count: cardboxZeroDiff))
+        cardboxes[0].append(contentsOf: cardLoader.popCards(count: cardboxZeroDiff, allowTreats: allowTreats))
     }
     
     func cycleCard() {

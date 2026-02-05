@@ -10,7 +10,7 @@ struct CardView: View {
     @State var definedWords: Set<String> = []
     private var isLandscape: Bool { verticalSizeClass == .compact }
     private var cardIdFontSize: CGFloat { isLandscape ? 80 : 48 }
-    private var wordFontSize: CGFloat { isLandscape ? 22 : 17 }
+    private var wordFontSize: CGFloat { isLandscape ? 24 : 17 }
     private var hookFontSize: CGFloat { isLandscape ? 14 : 10 }
     private var definitionFontSize: CGFloat { isLandscape ? 16 : 12 }
 

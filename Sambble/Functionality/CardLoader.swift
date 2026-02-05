@@ -25,13 +25,13 @@ class CardLoader {
         return cards.removeValue(forKey: id)!
     }
     
-    func popCards(count: Int) -> [Card] {
+    func popCards(count: Int, allowTreats: Bool = true) -> [Card] {
         let limit = min(count, cards.count)
         var result: [Card] = []
-        let treatChance = Constants.DEBUG ? 2 : 25
+        let treatChance = Constants.DEBUG ? 2 : 50
         for _ in 0..<limit {
             guard !cards.isEmpty else { break }
-            if probabilityOrder, Int.random(in: 0..<treatChance) == 0, cards.count > 1, let t = treat() {
+            if allowTreats && probabilityOrder, Int.random(in: 0..<treatChance) == 0, cards.count > 1, let t = treat() {
                 result.append(Card(id: t.id, words: t.words, status: .treat))
             } else {
                 let key = cards.keys.first!
