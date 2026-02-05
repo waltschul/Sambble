@@ -6,6 +6,7 @@ final class SettingsStore: ObservableObject {
 
     @AppStorage("SELECTED_QUIZ") var selectedQuiz: QuizID = QuizID.SEVENS
     @AppStorage("THEME_COLOR") var themeColorData: Data = Constants.THEME_COLOR_DEFAULT.encode()
+    @AppStorage("CAR_MODE") var carMode: Bool = false
 
     var themeColor: Color {
         get { Color.decode(themeColorData) }
