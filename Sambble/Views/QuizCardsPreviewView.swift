@@ -21,33 +21,65 @@ struct QuizCardsPreviewView: View {
         Group {
             if let quiz {
                 ScrollView {
-                    LazyVStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: 8) {
                         ForEach(Array(quiz.cardboxes.indices), id: \.self) { boxIndex in
                             let cards = cardsInBox(boxIndex)
                             if !cards.isEmpty {
                                 VStack(alignment: .leading, spacing: 4) {
+                                    if boxIndex == 0, let quizID {
+                                        VStack(alignment: .leading, spacing: 6) {
+                                            HStack(alignment: .center, spacing: 6) {
+                                                Text("Box 0 Size: \(quiz.cardboxZeroSize)")
+                                                    .font(.system(size: 10, weight: .medium, design: .monospaced))
+                                                    .foregroundColor(.gray)
+                                                Slider(
+                                                    value: Binding(
+                                                        get: { Double(quiz.cardboxZeroSize) },
+                                                        set: { newVal in
+                                                            quiz.cardboxZeroSize = Int(newVal)
+                                                            persistQuiz(id: quizID, quiz: quiz)
+                                                        }
+                                                    ),
+                                                    in: 5...100,
+                                                    step: 1
+                                                )
+                                                .frame(maxWidth: 80)
+                                            }
+                                            HStack(alignment: .center, spacing: 6) {
+                                                Text("More new words")
+                                                    .font(.system(size: 10, weight: .medium, design: .monospaced))
+                                                    .foregroundColor(.gray)
+                                                Spacer(minLength: 0)
+                                                Toggle("", isOn: Binding(
+                                                    get: { quiz.moreNewWords },
+                                                    set: { newValue in
+                                                        quiz.moreNewWords = newValue
+                                                        persistQuiz(id: quizID, quiz: quiz)
+                                                    }
+                                                ))
+                                                .labelsHidden()
+                                            }
+                                            HStack(alignment: .center, spacing: 6) {
+                                                Text("Treats")
+                                                    .font(.system(size: 10, weight: .medium, design: .monospaced))
+                                                    .foregroundColor(.gray)
+                                                Spacer(minLength: 0)
+                                                Toggle("", isOn: Binding(
+                                                    get: { quiz.treatModeEnabled },
+                                                    set: { newValue in
+                                                        quiz.treatModeEnabled = newValue
+                                                        persistQuiz(id: quizID, quiz: quiz)
+                                                    }
+                                                ))
+                                                .labelsHidden()
+                                            }
+                                        }
+                                    }
                                     HStack(alignment: .center, spacing: 8) {
                                         Text("Box \(boxIndex)")
                                             .font(.system(size: 14, weight: .semibold, design: .monospaced))
                                             .foregroundColor(settings.themeColor)
                                         Spacer(minLength: 0)
-                                        if boxIndex == 0, let quizID {
-                                            Text("Size: \(quiz.cardboxZeroSize)")
-                                                .font(.system(size: 12, weight: .medium, design: .monospaced))
-                                                .foregroundColor(.gray)
-                                            Slider(
-                                                value: Binding(
-                                                    get: { Double(quiz.cardboxZeroSize) },
-                                                    set: { newVal in
-                                                        quiz.cardboxZeroSize = Int(newVal)
-                                                        persistQuiz(id: quizID, quiz: quiz)
-                                                    }
-                                                ),
-                                                in: 5...100,
-                                                step: 1
-                                            )
-                                            .frame(maxWidth: 120)
-                                        }
                                     }
                                     ForEach(cards, id: \.id) { card in
                                         CardPreviewRow(card: card, showAnagrams: boxIndex != 0)

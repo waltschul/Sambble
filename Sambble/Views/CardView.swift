@@ -16,7 +16,6 @@ struct CardView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Spacer(minLength: isLandscape ? 100 : 300)
             HStack {
                 Spacer(minLength: 0)
                 ZStack(alignment: .topTrailing) {
@@ -44,44 +43,45 @@ struct CardView: View {
             Spacer().frame(height: 10)
             Group {
                 if card.checked != .UNCHECKED {
-                    ScrollView {
-                        LazyVStack(alignment: .leading, spacing: 4) {
-                            ForEach(card.card.words) { word in
-                                VStack(alignment: .center) {
-                                    HStack(alignment: .bottom) {
-                                        hookText(text: word.frontHooks, alignment: .trailing, size: hookFontSize)
-                                        Text(word.id)
-                                            .foregroundColor(color)
-                                            .debugOutline()
-                                        hookText(text: word.backHooks, alignment: .leading, size: hookFontSize)
+                    Group {
+                        if isLandscape && card.card.words.count > 5 {
+                            // Two columns for landscape with many anagrams
+                            let leftWords = card.card.words.enumerated().filter { $0.offset % 2 == 0 }.map { $0.element }
+                            let rightWords = card.card.words.enumerated().filter { $0.offset % 2 == 1 }.map { $0.element }
+                            let hookWidth = Self.maxHookWidth(words: card.card.words, hookFontSize: hookFontSize)
+                            HStack {
+                                Spacer()
+                                HStack(alignment: .top, spacing: 16) {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        ForEach(leftWords) { word in
+                                            wordRow(word: word, hookWidth: hookWidth)
+                                        }
                                     }
-                                    .frame(maxWidth: .infinity)
-                                    .contentShape(Rectangle())
-                                    .highPriorityGesture(TapGesture().onEnded {
-                                        definedWords.insert(word.id)
-                                    })
-                                    .debugOutline()
-                                    if definedWords.contains(word.id) {
-                                        Text(word.definition)
-                                            .foregroundColor(.yellow)
-                                            .font(.system(size: definitionFontSize))
-                                            .multilineTextAlignment(.center)
-                                            .lineLimit(nil)
-                                            .fixedSize(horizontal: false, vertical: true)
-                                            .italic()
-                                            .frame(maxWidth: .infinity, alignment: .center)
-                                            .debugOutline()
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        ForEach(rightWords) { word in
+                                            wordRow(word: word, hookWidth: hookWidth)
+                                        }
                                     }
                                 }
+                                Spacer()
                             }
+                            .padding(.horizontal, 8)
+                        } else {
+                            // Single column (portrait or <= 5 anagrams)
+                            VStack(alignment: .leading, spacing: 4) {
+                                let hookWidth = Self.maxHookWidth(words: card.card.words, hookFontSize: hookFontSize)
+                                ForEach(card.card.words) { word in
+                                    wordRow(word: word, hookWidth: hookWidth)
+                                }
+                            }
+                            .padding(.horizontal, 8)
                         }
-                        .padding(.horizontal, 8)
                     }
                 } else {
                     Color.clear
                 }
             }
-            .frame(maxHeight: .infinity)
+            .frame(maxHeight: .infinity, alignment: .top)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onChange(of: card.card) { _, _ in
@@ -92,10 +92,47 @@ struct CardView: View {
 }
 
 extension CardView {
-    func hookText(text: String, alignment: Alignment, size: CGFloat = 10) -> some View {
+    static func maxHookWidth(words: [Word], hookFontSize: CGFloat) -> CGFloat {
+        let maxLen = words.flatMap { [$0.frontHooks.count, $0.backHooks.count] }.max() ?? 0
+        let scale = hookFontSize * 0.7  // generous so hook text doesn’t wrap
+        return max(24, CGFloat(maxLen) * scale)
+    }
+
+    func hookText(text: String, alignment: Alignment, size: CGFloat, width: CGFloat) -> some View {
         Text(text)
             .foregroundColor(.gray)
-            .frame(width: 100, alignment: alignment)
             .font(.system(size: size))
+            .lineLimit(1)
+            .frame(width: width, alignment: alignment)
+    }
+    
+    func wordRow(word: Word, hookWidth: CGFloat = 100) -> some View {
+        VStack(alignment: .center) {
+            HStack(alignment: .firstTextBaseline) {
+                hookText(text: word.frontHooks, alignment: .trailing, size: hookFontSize, width: hookWidth)
+                Text(word.id)
+                    .font(.system(size: wordFontSize)) 
+                    .foregroundColor(color)
+                    .debugOutline()
+                hookText(text: word.backHooks, alignment: .leading, size: hookFontSize, width: hookWidth)
+            }
+            .fixedSize(horizontal: true, vertical: false)
+            .contentShape(Rectangle())
+            .highPriorityGesture(TapGesture().onEnded {
+                definedWords.insert(word.id)
+            })
+            .debugOutline()
+            if definedWords.contains(word.id) {
+                Text(word.definition)
+                    .foregroundColor(.yellow)
+                    .font(.system(size: definitionFontSize))
+                    .multilineTextAlignment(.center)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .italic()
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .debugOutline()
+            }
+        }
     }
 }

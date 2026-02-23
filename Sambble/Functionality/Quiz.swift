@@ -12,6 +12,8 @@ final class Quiz: Codable {
     var nextCard: ViewedCard
     var cardboxZeroSize: Int
     var index: Int
+    var moreNewWords: Bool
+    var treatModeEnabled: Bool
     
     var counts: [Int] {
         var counts = cardboxes.map { $0.count }
@@ -35,7 +37,9 @@ final class Quiz: Codable {
                   currentCard: try container.decode(ViewedCard.self, forKey: ._currentCard),
                   nextCard: try container.decode(ViewedCard.self, forKey: ._nextCard),
                   cardboxZeroSize: try container.decodeIfPresent(Int.self, forKey: ._cardboxZeroSize) ?? Constants.CARDBOX_ZERO_SIZE_DEFAULT,
-                  index: try container.decodeIfPresent(Int.self, forKey: ._index) ?? 1)
+                  index: try container.decodeIfPresent(Int.self, forKey: ._index) ?? 1,
+                  moreNewWords: try container.decodeIfPresent(Bool.self, forKey: ._moreNewWords) ?? false,
+                  treatModeEnabled: try container.decodeIfPresent(Bool.self, forKey: ._treatModeEnabled) ?? false)
     }
     
     convenience init(cardLoader: CardLoader, until: Card? = nil) {
@@ -46,9 +50,11 @@ final class Quiz: Codable {
              currentCard: ViewedCard(card: initialCards.removeFirst()),
              nextCard: ViewedCard(card: initialCards.removeFirst()),
              cardboxZeroSize: Constants.CARDBOX_ZERO_SIZE_DEFAULT,
-             index: 1
+             index: 1,
+             moreNewWords: false,
+             treatModeEnabled: false
         )
-        while until != nil && currentCard.card != until {
+        while until != nil && currentCard.card.id != until!.id {
             currentCard.correct = .CORRECT
             advance(allowTreats: false)
         }
@@ -60,7 +66,9 @@ final class Quiz: Codable {
          currentCard: ViewedCard,
          nextCard: ViewedCard,
          cardboxZeroSize: Int = Constants.CARDBOX_ZERO_SIZE_DEFAULT,
-         index: Int = 1) {
+         index: Int = 1,
+         moreNewWords: Bool = false,
+         treatModeEnabled: Bool = false) {
         self.cardLoader = cardLoader
         self.cardboxes = cardboxes
         self.cardboxAlgorithm = cardboxAlgorithm
@@ -68,6 +76,8 @@ final class Quiz: Codable {
         self.nextCard = nextCard
         self.cardboxZeroSize = cardboxZeroSize
         self.index = index
+        self.moreNewWords = moreNewWords
+        self.treatModeEnabled = treatModeEnabled
     }
     
     func advance(allowTreats: Bool = true) {
@@ -84,7 +94,7 @@ final class Quiz: Codable {
         let markedCard = currentCard
         currentCard = nextCard
         
-        let nextBox = cardboxAlgorithm.nextCardbox(cardboxes: cardboxes)
+        let nextBox = cardboxAlgorithm.nextCardbox(cardboxes: cardboxes, moreNewWords: moreNewWords)
         nextCard = ViewedCard(card: cardboxes[nextBox].removeFirst(), box: nextBox)
         cardboxes[markedCard.newBox].append(Card(id: markedCard.card.id, words: markedCard.card.words, status: .normal))
         print("\(markedCard) moved to \(markedCard.newBox). Current card is now \(currentCard), next card is \(nextCard) popped from \(nextBox)")
@@ -97,5 +107,7 @@ final class Quiz: Codable {
         case _nextCard = "nextCard"
         case _cardboxZeroSize = "cardboxZeroSize"
         case _index = "index"
+        case _moreNewWords = "moreNewWords"
+        case _treatModeEnabled = "treatModeEnabled"
     }
 }

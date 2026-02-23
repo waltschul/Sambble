@@ -16,7 +16,7 @@ final class QuizViewModel: ObservableObject {
     func handleCardAnswer() {
         //TODO data race -- doesn't rlly matter
         if index != 1 {
-            quiz.advance()
+            quiz.advance(allowTreats: quiz.treatModeEnabled)
             index = 1
         }
         quiz.currentCard.checked = quiz.currentCard.checked.nextState()
@@ -27,6 +27,7 @@ final class QuizViewModel: ObservableObject {
 
 extension QuizViewModel {
     func registerMediaCommands() {
+        guard SettingsStore.shared.carMode else { return }
         let media = MediaCommandManager.shared
 
         //TODO simplify?

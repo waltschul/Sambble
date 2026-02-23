@@ -22,6 +22,22 @@ final class MediaCommandManager: ObservableObject {
         print("MediaCommandManager started")
     }
 
+    func stop() {
+        let commandCenter = MPRemoteCommandCenter.shared()
+        if let handler = nextHandler {
+            commandCenter.nextTrackCommand.removeTarget(handler)
+            self.nextHandler = nil
+        }
+        if let handler = previousHandler {
+            commandCenter.previousTrackCommand.removeTarget(handler)
+            self.previousHandler = nil
+        }
+        commandCenter.nextTrackCommand.isEnabled = false
+        commandCenter.previousTrackCommand.isEnabled = false
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        print("MediaCommandManager stopped")
+    }
+
     func initializeNowPlaying() {
         Task {
             nowPlaying = await NowPlaying.presets().randomElement()!
@@ -47,20 +63,31 @@ final class MediaCommandManager: ObservableObject {
         }
     }
 
+    private var nextHandler: Any?
+    private var previousHandler: Any?
+
     private func configureRemoteCommands() {
         let commandCenter = MPRemoteCommandCenter.shared()
+
+        // Remove old handlers if they exist
+        if let nextHandler = nextHandler {
+            commandCenter.nextTrackCommand.removeTarget(nextHandler)
+        }
+        if let previousHandler = previousHandler {
+            commandCenter.previousTrackCommand.removeTarget(previousHandler)
+        }
 
         commandCenter.nextTrackCommand.isEnabled = true
         commandCenter.previousTrackCommand.isEnabled = true
 
-        commandCenter.nextTrackCommand.addTarget { [weak self] _ in
+        nextHandler = commandCenter.nextTrackCommand.addTarget { [weak self] _ in
             print("NEXT TRACK RECEIVED")
             self?.onNext?()
             return .success
         }
 
-        commandCenter.previousTrackCommand.addTarget { [weak self] _ in
-            print("NEXT TRACK RECEIVED")
+        previousHandler = commandCenter.previousTrackCommand.addTarget { [weak self] _ in
+            print("PREVIOUS TRACK RECEIVED")
             self?.onPrevious?()
             return .success
         }

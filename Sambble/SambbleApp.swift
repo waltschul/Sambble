@@ -15,8 +15,18 @@ struct SambbleApp: App {
             RootView()
                 .environmentObject(SettingsStore.shared)
                 .onAppear() {
-                    SilentAudioPlayer.shared.start()
-                    MediaCommandManager.shared.start()
+                    if SettingsStore.shared.carMode {
+                        SilentAudioPlayer.shared.start()
+                        MediaCommandManager.shared.start()
+                    }
+                }
+                .onChange(of: SettingsStore.shared.carMode) { _, newValue in
+                    if newValue {
+                        SilentAudioPlayer.shared.start()
+                        MediaCommandManager.shared.start()
+                    } else {
+                        MediaCommandManager.shared.stop()
+                    }
                 }
         }
     }

@@ -1,4 +1,5 @@
 enum QuizID: String, CaseIterable, Codable {
+    case TWOS = "Twos"
     case THREES = "Threes"
     case FOURS = "Fours"
     case JKQXZ_FIVES = "JKQXZ Fives"
@@ -8,6 +9,8 @@ enum QuizID: String, CaseIterable, Codable {
 
     var parameters: QuizParameters {
         switch self {
+        case .TWOS:
+            return QuizParameters(probabilityOrder: false, filter: { $0.count == 2 })
         case .THREES:
             return QuizParameters(probabilityOrder: false, filter: { $0.count == 3 })
         case .FOURS:
