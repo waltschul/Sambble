@@ -35,6 +35,7 @@ struct InitializeView: View {
                 .frame(height: 0)
                 .padding()
             CardView(card: ViewedCard(card: card, checked: AnswerState.CHECKED))
+                .environment(\.verticalSizeClass, .regular)
                 .frame(maxHeight: 600)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
