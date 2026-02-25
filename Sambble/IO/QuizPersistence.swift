@@ -6,30 +6,8 @@ func persistQuiz(id: QuizID, quiz: Quiz) {
         let url = try quizFileURL(id: id)
         let data = try JSONEncoder().encode(quiz)
         try data.write(to: url)
-        
-        // Also save to iCloud Drive - iOS will sync automatically when device backs up
-        Task {
-            backupQuizToiCloudAsync(id: id, data: data)
-        }
     } catch {
         print("[DEBUG] Failed to save quiz: \(error)")
-    }
-}
-
-private func backupQuizToiCloudAsync(id: QuizID, data: Data) {
-    guard let iCloudURL = FileManager.default.url(forUbiquityContainerIdentifier: "iCloud.com.Sambble") else {
-        return
-    }
-    
-    let documentsURL = iCloudURL.appendingPathComponent("Documents")
-    let backupURL = documentsURL.appendingPathComponent("\(id.rawValue).json")
-    
-    do {
-        try FileManager.default.createDirectory(at: documentsURL, withIntermediateDirectories: true)
-        try data.write(to: backupURL, options: [.atomic, .completeFileProtection])
-        // iOS will sync this to iCloud automatically during normal backups
-    } catch {
-        // Silently fail - backup is best effort
     }
 }
 
@@ -68,30 +46,6 @@ func loadQuiz(id: QuizID) -> Quiz? {
                 print("[DEBUG] Unknown decoding error")
             }
         }
-        return nil
-    }
-}
-
-
-func restoreQuizFromiCloud(id: QuizID) -> Quiz? {
-    guard let iCloudURL = FileManager.default.url(forUbiquityContainerIdentifier: "iCloud.com.Sambble") else {
-        return nil
-    }
-    
-    let backupURL = iCloudURL.appendingPathComponent("Documents/\(id.rawValue).json")
-    guard FileManager.default.fileExists(atPath: backupURL.path) else {
-        return nil
-    }
-    
-    do {
-        let data = try Data(contentsOf: backupURL)
-        let cardLoader = CardLoader(quizParameters: id.parameters)
-        let decoder = JSONDecoder()
-        decoder.userInfo[.cardLoader] = cardLoader
-        let quiz = try decoder.decode(Quiz.self, from: data)
-        return quiz
-    } catch {
-        print("[DEBUG] Failed to restore from iCloud: \(error)")
         return nil
     }
 }

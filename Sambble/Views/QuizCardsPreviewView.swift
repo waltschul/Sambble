@@ -27,11 +27,12 @@ struct QuizCardsPreviewView: View {
                             if !cards.isEmpty {
                                 VStack(alignment: .leading, spacing: 4) {
                                     if boxIndex == 0, let quizID {
-                                        VStack(alignment: .leading, spacing: 6) {
+                                        VStack(alignment: .leading, spacing: 2) {
                                             HStack(alignment: .center, spacing: 6) {
                                                 Text("Box 0 Size: \(quiz.cardboxZeroSize)")
                                                     .font(.system(size: 10, weight: .medium, design: .monospaced))
                                                     .foregroundColor(.gray)
+                                                Spacer(minLength: 0)
                                                 Slider(
                                                     value: Binding(
                                                         get: { Double(quiz.cardboxZeroSize) },
