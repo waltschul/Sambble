@@ -73,6 +73,7 @@ struct QuizCardsPreviewView: View {
                                                     }
                                                 ))
                                                 .labelsHidden()
+                                                .disabled(!(quizID.parameters.probabilityOrder))
                                             }
                                         }
                                     }

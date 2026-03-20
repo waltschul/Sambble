@@ -22,7 +22,7 @@ enum QuizID: String, CaseIterable, Codable {
         case .EIGHTS:
             return QuizParameters(probabilityOrder: true, filter: { $0.count == 8 })
         case .FIVE_VOWEL_EIGHTS:
-            return QuizParameters(probabilityOrder: true, filter: {
+            return QuizParameters(probabilityOrder: false, filter: {
                 $0.count == 8 && $0.filter { "AEIOU".contains($0.uppercased()) }.count == 5
             })
         }

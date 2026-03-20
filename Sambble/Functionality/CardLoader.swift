@@ -13,7 +13,6 @@ class CardLoader {
         self.totalWords = CardLoader.wordCount(cards: Array(cards.values))
     }
     
-    //TODO freq, handle cards empty
     func treat() -> Card? {
         guard !cards.isEmpty else { return nil }
         let halfIndex = cards.count / 2

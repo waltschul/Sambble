@@ -68,12 +68,13 @@ struct CardView: View {
                             .padding(.horizontal, 8)
                         } else {
                             // Single column (portrait or <= 5 anagrams)
-                            VStack(alignment: .leading, spacing: 4) {
+                            VStack(alignment: .center, spacing: 4) {
                                 let hookWidth = Self.maxHookWidth(words: card.card.words, hookFontSize: hookFontSize)
                                 ForEach(card.card.words) { word in
                                     wordRow(word: word, hookWidth: hookWidth)
                                 }
                             }
+                            .frame(maxWidth: .infinity)
                             .padding(.horizontal, 8)
                         }
                     }
