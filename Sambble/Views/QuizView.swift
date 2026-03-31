@@ -10,43 +10,45 @@ struct QuizView: View {
     }
 
     var body: some View {
-        CardSwipeView(quiz: vm.quiz, index: $vm.index)
-            .background(Color.clear.contentShape(Rectangle()).ignoresSafeArea())
-            .onTapGesture {
-                vm.handleCardAnswer()
-            }
-            .focusable()
-            .focused($isFocused)
-            .onAppear { isFocused = true }
-            .onKeyPress(.leftArrow) {
-                if vm.quiz.currentCard.checked == .UNCHECKED {
-                    vm.handleCardAnswer()
-                } else {
-                    vm.index = 2
-                    vm.handleCardAnswer()
+        ZStack(alignment: .bottom) {
+            CardSwipeView(quiz: vm.quiz, index: $vm.index)
+                .background(Color.clear.contentShape(Rectangle()).ignoresSafeArea())
+                .onTapGesture {
+                    vm.handle(.tap)
                 }
-                return .handled
-            }
-            .onKeyPress(.rightArrow) {
-                if vm.quiz.currentCard.checked == .UNCHECKED {
-                    vm.handleCardAnswer()
-                } else {
-                    vm.index = 0
-                    vm.handleCardAnswer()
+                .focusable()
+                .focused($isFocused)
+                .onAppear { isFocused = true }
+                .onKeyPress(.leftArrow) {
+                    vm.handle(.arrowLeft)
+                    return .handled
                 }
-                return .handled
-            }
-            .onKeyPress(.space) {
-                vm.handleCardAnswer()
-                return .handled
-            }
-            .onChange(of: vm.index) { _, newIndex in
-                vm.quiz.index = newIndex
-            }
-            .onChange(of: settings.carMode) { _, newValue in
-                if newValue {
-                    vm.registerMediaCommands()
+                .onKeyPress(.rightArrow) {
+                    vm.handle(.arrowRight)
+                    return .handled
                 }
+                .onKeyPress(.space) {
+                    vm.handle(.tap)
+                    return .handled
+                }
+                .onChange(of: vm.index) { _, newIndex in
+                    vm.quiz.index = newIndex
+                }
+                .onChange(of: settings.carMode) { _, newValue in
+                    if newValue {
+                        vm.registerMediaCommands()
+                    }
+                }
+
+            #if DEBUG
+            HStack(spacing: 24) {
+                Button("⏮ Prev") { vm.handle(.mediaPrev) }
+                    .buttonStyle(.bordered)
+                Button("⏭ Next") { vm.handle(.mediaNext) }
+                    .buttonStyle(.bordered)
             }
+            .padding(.bottom, 24)
+            #endif
+        }
     }
 }
