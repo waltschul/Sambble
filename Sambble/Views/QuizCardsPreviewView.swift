@@ -24,7 +24,7 @@ struct QuizCardsPreviewView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         ForEach(Array(quiz.cardboxes.indices), id: \.self) { boxIndex in
                             let cards = cardsInBox(boxIndex)
-                            if !cards.isEmpty {
+                            if !cards.isEmpty || boxIndex == 0 {
                                 VStack(alignment: .leading, spacing: 4) {
                                     if boxIndex == 0, let quizID {
                                         VStack(alignment: .leading, spacing: 2) {
@@ -77,15 +77,17 @@ struct QuizCardsPreviewView: View {
                                             }
                                         }
                                     }
-                                    HStack(alignment: .center, spacing: 8) {
-                                        Text("Box \(boxIndex)")
-                                            .font(.system(size: 14, weight: .semibold, design: .monospaced))
-                                            .foregroundColor(settings.themeColor)
-                                        Spacer(minLength: 0)
-                                    }
-                                    ForEach(cards, id: \.id) { card in
-                                        CardPreviewRow(card: card, showAnagrams: boxIndex != 0)
-                                            .environmentObject(settings)
+                                    if !cards.isEmpty {
+                                        HStack(alignment: .center, spacing: 8) {
+                                            Text("Box \(boxIndex)")
+                                                .font(.system(size: 14, weight: .semibold, design: .monospaced))
+                                                .foregroundColor(settings.themeColor)
+                                            Spacer(minLength: 0)
+                                        }
+                                        ForEach(cards, id: \.id) { card in
+                                            CardPreviewRow(card: card, showAnagrams: boxIndex != 0)
+                                                .environmentObject(settings)
+                                        }
                                     }
                                 }
                             }
