@@ -9,8 +9,9 @@ struct RootView: View {
     @EnvironmentObject var settings: SettingsStore
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.verticalSizeClass) private var verticalSizeClass
-    private var selectedQuiz: QuizID {
-        settings.selectedQuiz
+
+    private var selectedIdentifier: QuizIdentifier {
+        settings.selectedQuizIdentifier
     }
 
     init() {
@@ -22,29 +23,7 @@ struct RootView: View {
             ZStack {
                 Color.black.ignoresSafeArea()
                 VStack {
-                    if let existingQuiz = quizCache.quizCache[selectedQuiz] {
-                        QuizView(id: selectedQuiz, quiz: existingQuiz)
-                            .id(ObjectIdentifier(existingQuiz))
-                            .overlay(
-                                Group {
-                                    if verticalSizeClass != .compact {
-                                        CardboxView(quiz: existingQuiz)
-                                            .padding(.all)
-                                    }
-                                },
-                                alignment: .topLeading
-                            )
-                            .overlay(
-                                ScoreView(id: selectedQuiz, quiz: existingQuiz),
-                                alignment: .top
-                            )
-                    } else {
-                        InitializeView(
-                            quizID: selectedQuiz,
-                            cardLoader: CardLoader(quizParameters: selectedQuiz.parameters),
-                            quizCache: quizCache
-                        )
-                    }
+                    quizContent
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .overlay(
@@ -59,9 +38,63 @@ struct RootView: View {
             }
         }
         .onChange(of: scenePhase) { _, newPhase in
-            if newPhase == .background, let quiz = quizCache.quizCache[selectedQuiz] {
-                persistQuiz(id: selectedQuiz, quiz: quiz)
+            if newPhase == .background {
+                persistActiveQuiz()
             }
+        }
+    }
+
+    @ViewBuilder
+    private var quizContent: some View {
+        switch selectedIdentifier {
+        case .builtin(let id):
+            if let quiz = quizCache.quizCache[id] {
+                quizViewWithOverlays(identifier: selectedIdentifier, quiz: quiz)
+            } else {
+                InitializeView(
+                    id: selectedIdentifier,
+                    cardLoader: CardLoader(quizParameters: id.parameters),
+                    quizCache: quizCache
+                )
+            }
+        case .custom(let spec):
+            if let quiz = quizCache.customQuizCache[spec.id] {
+                quizViewWithOverlays(identifier: selectedIdentifier, quiz: quiz)
+            } else {
+                InitializeView(
+                    id: selectedIdentifier,
+                    cardLoader: CardLoader(quizParameters: spec.parameters),
+                    quizCache: quizCache
+                )
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func quizViewWithOverlays(identifier: QuizIdentifier, quiz: Quiz) -> some View {
+        QuizView(id: identifier, quiz: quiz)
+            .id(ObjectIdentifier(quiz))
+            .overlay(
+                Group {
+                    if verticalSizeClass != .compact {
+                        CardboxView(quiz: quiz)
+                            .padding(.all)
+                    }
+                },
+                alignment: .topLeading
+            )
+            .overlay(
+                ScoreView(id: identifier, quiz: quiz),
+                alignment: .top
+            )
+    }
+
+    private func persistActiveQuiz() {
+        switch selectedIdentifier {
+        case .builtin(let id):
+            if let quiz = quizCache.quizCache[id] { persistQuiz(id: id, quiz: quiz) }
+        case .custom(let spec):
+            if let quiz = quizCache.customQuizCache[spec.id] { persistCustomQuiz(spec: spec, quiz: quiz) }
         }
     }
 }

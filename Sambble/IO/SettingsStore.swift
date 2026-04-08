@@ -4,10 +4,49 @@ import SwiftUI
 final class SettingsStore: ObservableObject {
     static let shared = SettingsStore()
 
-    @AppStorage("SELECTED_QUIZ") var selectedQuiz: QuizID = QuizID.SEVENS
+    @AppStorage("SELECTED_QUIZ_ID") var selectedQuizIdentifierData: Data = Data()
+    @AppStorage("CUSTOM_QUIZZES") var customQuizzesData: Data = Data()
     @AppStorage("THEME_COLOR") var themeColorData: Data = Constants.THEME_COLOR_DEFAULT.encode()
     @AppStorage("CAR_MODE") var carMode: Bool = false {
         didSet { objectWillChange.send() }
+    }
+
+    var selectedQuizIdentifier: QuizIdentifier {
+        get {
+            if let id = try? JSONDecoder().decode(QuizIdentifier.self, from: selectedQuizIdentifierData) {
+                return id
+            }
+            // Migration: read the old SELECTED_QUIZ string key
+            if let rawValue = UserDefaults.standard.string(forKey: "SELECTED_QUIZ"),
+               let oldID = QuizID(rawValue: rawValue) {
+                return .builtin(oldID)
+            }
+            return .builtin(.SEVENS)
+        }
+        set {
+            selectedQuizIdentifierData = (try? JSONEncoder().encode(newValue)) ?? Data()
+            objectWillChange.send()
+        }
+    }
+
+    var customQuizzes: [CustomQuizSpec] {
+        get {
+            (try? JSONDecoder().decode([CustomQuizSpec].self, from: customQuizzesData)) ?? []
+        }
+        set {
+            customQuizzesData = (try? JSONEncoder().encode(newValue)) ?? Data()
+            objectWillChange.send()
+        }
+    }
+
+    func addCustomQuiz(_ spec: CustomQuizSpec) {
+        var quizzes = customQuizzes
+        quizzes.append(spec)
+        customQuizzes = quizzes
+    }
+
+    func removeCustomQuiz(id: UUID) {
+        customQuizzes = customQuizzes.filter { $0.id != id }
     }
 
     var themeColor: Color {
@@ -43,4 +82,3 @@ extension Color {
         return Color(red: components[0], green: components[1], blue: components[2])
     }
 }
-

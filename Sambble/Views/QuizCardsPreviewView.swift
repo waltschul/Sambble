@@ -2,7 +2,7 @@ import SwiftUI
 
 struct QuizCardsPreviewView: View {
     let quiz: Quiz?
-    let quizID: QuizID?
+    let id: QuizIdentifier?
     @EnvironmentObject var settings: SettingsStore
 
     private func cardsInBox(_ boxIndex: Int) -> [Card] {
@@ -26,7 +26,7 @@ struct QuizCardsPreviewView: View {
                             let cards = cardsInBox(boxIndex)
                             if !cards.isEmpty || boxIndex == 0 {
                                 VStack(alignment: .leading, spacing: 4) {
-                                    if boxIndex == 0, let quizID {
+                                    if boxIndex == 0, let id {
                                         VStack(alignment: .leading, spacing: 2) {
                                             HStack(alignment: .center, spacing: 6) {
                                                 Text("Box 0 Size: \(quiz.cardboxZeroSize)")
@@ -38,7 +38,7 @@ struct QuizCardsPreviewView: View {
                                                         get: { Double(quiz.cardboxZeroSize) },
                                                         set: { newVal in
                                                             quiz.cardboxZeroSize = Int(newVal)
-                                                            persistQuiz(id: quizID, quiz: quiz)
+                                                            persistQuiz(id: id, quiz: quiz)
                                                         }
                                                     ),
                                                     in: 5...100,
@@ -55,7 +55,7 @@ struct QuizCardsPreviewView: View {
                                                     get: { quiz.moreNewWords },
                                                     set: { newValue in
                                                         quiz.moreNewWords = newValue
-                                                        persistQuiz(id: quizID, quiz: quiz)
+                                                        persistQuiz(id: id, quiz: quiz)
                                                     }
                                                 ))
                                                 .labelsHidden()
@@ -69,11 +69,11 @@ struct QuizCardsPreviewView: View {
                                                     get: { quiz.treatModeEnabled },
                                                     set: { newValue in
                                                         quiz.treatModeEnabled = newValue
-                                                        persistQuiz(id: quizID, quiz: quiz)
+                                                        persistQuiz(id: id, quiz: quiz)
                                                     }
                                                 ))
                                                 .labelsHidden()
-                                                .disabled(!(quizID.parameters.probabilityOrder))
+                                                .disabled(!(id.parameters.probabilityOrder))
                                             }
                                         }
                                     }

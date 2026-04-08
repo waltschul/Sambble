@@ -1,5 +1,7 @@
 import Foundation
 
+// MARK: - Built-in quiz persistence
+
 func persistQuiz(id: QuizID, quiz: Quiz) {
     if (Constants.DEBUG) { return }
     do {
@@ -74,5 +76,55 @@ func printQuizToDebug(id: QuizID, quiz: Quiz) {
         }
     } catch {
         print("[DEBUG] Failed to encode quiz \(id.rawValue): \(error)")
+    }
+}
+
+// MARK: - Custom quiz persistence
+
+func persistCustomQuiz(spec: CustomQuizSpec, quiz: Quiz) {
+    do {
+        let url = try customQuizFileURL(spec: spec)
+        let data = try JSONEncoder().encode(quiz)
+        try data.write(to: url)
+    } catch {
+        print("[DEBUG] Failed to save custom quiz \(spec.name): \(error)")
+    }
+}
+
+func loadCustomQuiz(spec: CustomQuizSpec) -> Quiz? {
+    do {
+        let url = try customQuizFileURL(spec: spec)
+        guard FileManager.default.fileExists(atPath: url.path) else { return nil }
+        let data = try Data(contentsOf: url)
+        let cardLoader = CardLoader(quizParameters: spec.parameters)
+        let decoder = JSONDecoder()
+        decoder.userInfo[.cardLoader] = cardLoader
+        return try decoder.decode(Quiz.self, from: data)
+    } catch {
+        print("[DEBUG] ⚠️ Failed to load custom quiz \(spec.name): \(error)")
+        return nil
+    }
+}
+
+func deleteCustomQuizFile(spec: CustomQuizSpec) {
+    guard let url = try? customQuizFileURL(spec: spec) else { return }
+    try? FileManager.default.removeItem(at: url)
+}
+
+func customQuizFileURL(spec: CustomQuizSpec) throws -> URL {
+    let fileName = "custom_\(spec.id.uuidString).json"
+    guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.Sambble") else {
+        throw URLError(.fileDoesNotExist)
+    }
+    return containerURL.appendingPathComponent(fileName)
+}
+
+// MARK: - Unified dispatcher
+
+/// Persists a quiz for any QuizIdentifier, dispatching to the appropriate function.
+func persistQuiz(id: QuizIdentifier, quiz: Quiz) {
+    switch id {
+    case .builtin(let quizID): persistQuiz(id: quizID, quiz: quiz)
+    case .custom(let spec): persistCustomQuiz(spec: spec, quiz: quiz)
     }
 }

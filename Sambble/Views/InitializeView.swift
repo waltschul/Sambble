@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct InitializeView: View {
-    let quizID: QuizID
+    let id: QuizIdentifier
     let cardLoader: CardLoader
     let quizCache: QuizCache
     @EnvironmentObject var settings: SettingsStore
@@ -15,7 +15,7 @@ struct InitializeView: View {
     var card: Card {
         cardLoader.cards.elements[index].value
     }
-    
+
     var body: some View {
         VStack {
             Spacer(minLength: topSpacerLength)
@@ -40,8 +40,14 @@ struct InitializeView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
-    
+
     func makeQuiz() {
-        quizCache.quizCache[quizID] = Quiz(cardLoader: cardLoader, until: card)
+        let quiz = Quiz(cardLoader: cardLoader, until: card)
+        switch id {
+        case .builtin(let quizID):
+            quizCache.quizCache[quizID] = quiz
+        case .custom(let spec):
+            quizCache.customQuizCache[spec.id] = quiz
+        }
     }
 }

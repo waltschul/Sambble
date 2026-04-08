@@ -15,12 +15,12 @@ enum CardInputEvent {
 }
 
 final class QuizViewModel: ObservableObject {
-    let id: QuizID
+    let id: QuizIdentifier
     let quiz: Quiz
 
     @Published var index: Int
 
-    init(id: QuizID, quiz: Quiz) {
+    init(id: QuizIdentifier, quiz: Quiz) {
         self.id = id
         self.quiz = quiz
         self.index = quiz.index

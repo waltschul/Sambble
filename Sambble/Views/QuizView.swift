@@ -5,7 +5,7 @@ struct QuizView: View {
     @EnvironmentObject var settings: SettingsStore
     @FocusState private var isFocused: Bool
 
-    init(id: QuizID, quiz: Quiz) {
+    init(id: QuizIdentifier, quiz: Quiz) {
         _vm = StateObject(wrappedValue: QuizViewModel(id: id, quiz: quiz))
     }
 

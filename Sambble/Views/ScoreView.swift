@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ScoreView: View {
-    let id: QuizID
+    let id: QuizIdentifier
     let quiz: Quiz
     @EnvironmentObject var settings: SettingsStore
     @State var isAnimating = false
@@ -19,6 +19,6 @@ struct ScoreView: View {
                 }
             }
             .debugOutline()
-            .shareOnLongPress(items: ["I've studied \(quiz.score) / \(quiz.cardLoader.totalWords) of my Sambble \(id.rawValue)!"])
+            .shareOnLongPress(items: ["I've studied \(quiz.score) / \(quiz.cardLoader.totalWords) of my Sambble \(id.displayName)!"])
     }
 }
