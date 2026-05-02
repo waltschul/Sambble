@@ -44,11 +44,13 @@ final class Quiz: Codable {
     
     convenience init(cardLoader: CardLoader, until: Card? = nil) {
         var initialCards = cardLoader.popCards(count: 2, allowTreats: false)
+        let first = initialCards.removeFirst()
+        let second = initialCards.isEmpty ? first : initialCards.removeFirst()
         self.init(cardLoader: cardLoader,
              cardboxes: Array(repeating: [], count: Constants.NUM_BOXES),
              cardboxAlgorithm: CardboxAlgorithm(),
-             currentCard: ViewedCard(card: initialCards.removeFirst()),
-             nextCard: ViewedCard(card: initialCards.removeFirst()),
+             currentCard: ViewedCard(card: first),
+             nextCard: ViewedCard(card: second),
              cardboxZeroSize: Constants.CARDBOX_ZERO_SIZE_DEFAULT,
              index: 1,
              moreNewWords: false,
@@ -93,10 +95,12 @@ final class Quiz: Codable {
     func cycleCard() {
         let markedCard = currentCard
         currentCard = nextCard
-        
+
+        // Append the answered card to its destination box before picking next,
+        // so it's available as a draw target when the deck is nearly empty.
+        cardboxes[markedCard.newBox].append(Card(id: markedCard.card.id, words: markedCard.card.words, status: .normal))
         let nextBox = cardboxAlgorithm.nextCardbox(cardboxes: cardboxes, moreNewWords: moreNewWords)
         nextCard = ViewedCard(card: cardboxes[nextBox].removeFirst(), box: nextBox)
-        cardboxes[markedCard.newBox].append(Card(id: markedCard.card.id, words: markedCard.card.words, status: .normal))
         print("\(markedCard) moved to \(markedCard.newBox). Current card is now \(currentCard), next card is \(nextCard) popped from \(nextBox)")
     }
     

@@ -22,7 +22,7 @@ struct CreateCustomQuizView: View {
     private var canCreate: Bool {
         !name.trimmingCharacters(in: .whitespaces).isEmpty &&
         !normalizedExpression.isEmpty &&
-        (cardCount ?? 0) > 0
+        (cardCount ?? 0) >= 2
     }
 
     var body: some View {
@@ -37,7 +37,11 @@ struct CreateCustomQuizView: View {
                         TextField("@ = Wildcard", text: $expression)
                             .autocorrectionDisabled()
                             .textInputAutocapitalization(.characters)
-                            .onChange(of: expression) { scheduleCount() }
+                            .onChange(of: expression) {
+                                let filtered = expression.filter { $0.isLetter && $0.isASCII || $0 == "@" }
+                                if filtered != expression { expression = filtered }
+                                scheduleCount()
+                            }
                         Spacer()
                         wordCountView
                     }
